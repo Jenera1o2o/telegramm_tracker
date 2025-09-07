@@ -700,13 +700,15 @@
 
         function initializeHabits() {
             console.log('Инициализируем данные привычек');
-            habitData = {};
-            habits.forEach((habit, habitIndex) => {
-                habitData[habitIndex] = {};
-                for (let day = 1; day <= daysInMonth; day++) {
-                    habitData[habitIndex][day] = false;
-                }
-            });
+            // НЕ перезаписываем habitData если он уже существует
+            if (Object.keys(habitData).length === 0) {
+                habits.forEach((habit, habitIndex) => {
+                    habitData[habitIndex] = {};
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        habitData[habitIndex][day] = false;
+                    }
+                });
+            }
         }
 
         function createHabitsTable() {
@@ -939,7 +941,7 @@
             
             console.log('Найдено отмеченных чекбоксов:', checkedCount);
 
-            // Сохраняем прогресс
+            // Сохраняем прогресс (ИСПРАВЛЕНО)
             saveProgressData();
 
             // Считаем статистику
@@ -1026,7 +1028,7 @@
                 }
             }
 
-            // Отправляем в n8n
+            // Отправляем в n8n (ИСПРАВЛЕН URL)
             sendToN8N();
         }
 
@@ -1039,54 +1041,115 @@
                 habits: habits
             };
             
+            console.log('Сохраняем прогресс...', progressData);
+            
+            // Пробуем разные способы сохранения
+            let saved = false;
+            
             if (tgApp?.CloudStorage) {
-                tgApp.CloudStorage.setItem('habit_progress', JSON.stringify(progressData));
-                console.log('Прогресс сохранен в CloudStorage');
-            } else {
+                try {
+                    tgApp.CloudStorage.setItem('habit_progress', JSON.stringify(progressData));
+                    console.log('Прогресс сохранен в CloudStorage');
+                    saved = true;
+                } catch (error) {
+                    console.error('Ошибка сохранения в CloudStorage:', error);
+                }
+            }
+            
+            if (tgApp?.localStorage) {
+                try {
+                    tgApp.localStorage.setItem('habit_progress', JSON.stringify(progressData));
+                    console.log('Прогресс сохранен в Telegram localStorage');
+                    saved = true;
+                } catch (error) {
+                    console.error('Ошибка сохранения в Telegram localStorage:', error);
+                }
+            }
+            
+            // Fallback в обычный localStorage
+            try {
                 localStorage.setItem('proryv_progress', JSON.stringify(progressData));
-                console.log('Прогресс сохранен в localStorage');
+                console.log('Прогресс сохранен в обычный localStorage');
+                saved = true;
+            } catch (error) {
+                console.error('Ошибка сохранения в localStorage:', error);
+            }
+            
+            if (!saved) {
+                console.error('НЕ УДАЛОСЬ СОХРАНИТЬ ПРОГРЕСС!');
             }
         }
 
         function loadProgressData() {
             console.log('Загружаем прогресс...');
             
+            let loaded = false;
+            
+            // Пробуем загружать из разных источников
             if (tgApp?.CloudStorage) {
                 tgApp.CloudStorage.getItem('habit_progress', (error, data) => {
                     if (data && !error) {
                         try {
                             const savedData = JSON.parse(data);
-                            // Сливаем сохраненные данные с текущими
-                            Object.keys(savedData.habitData || {}).forEach(habitIndex => {
-                                if (habitData[habitIndex]) {
-                                    habitData[habitIndex] = {...habitData[habitIndex], ...savedData.habitData[habitIndex]};
-                                }
-                            });
+                            mergeProgressData(savedData.habitData);
                             console.log('Прогресс загружен из CloudStorage');
                             restoreCheckboxes();
                             updateProgress();
+                            loaded = true;
                         } catch (e) {
-                            console.log('Ошибка загрузки прогресса:', e);
+                            console.log('Ошибка загрузки прогресса из CloudStorage:', e);
                         }
+                    }
+                    
+                    if (!loaded) {
+                        tryLoadFromOtherSources();
                     }
                 });
             } else {
+                tryLoadFromOtherSources();
+            }
+            
+            function tryLoadFromOtherSources() {
+                // Пробуем Telegram localStorage
+                if (tgApp?.localStorage) {
+                    try {
+                        const data = tgApp.localStorage.getItem('habit_progress');
+                        if (data) {
+                            const savedData = JSON.parse(data);
+                            mergeProgressData(savedData.habitData);
+                            console.log('Прогресс загружен из Telegram localStorage');
+                            restoreCheckboxes();
+                            updateProgress();
+                            return;
+                        }
+                    } catch (e) {
+                        console.log('Ошибка Telegram localStorage:', e);
+                    }
+                }
+                
+                // Fallback в обычный localStorage
                 const savedData = localStorage.getItem('proryv_progress');
                 if (savedData) {
                     try {
                         const data = JSON.parse(savedData);
-                        Object.keys(data.habitData || {}).forEach(habitIndex => {
-                            if (habitData[habitIndex]) {
-                                habitData[habitIndex] = {...habitData[habitIndex], ...data.habitData[habitIndex]};
-                            }
-                        });
-                        console.log('Прогресс загружен из localStorage');
+                        mergeProgressData(data.habitData);
+                        console.log('Прогресс загружен из обычного localStorage');
                         restoreCheckboxes();
                         updateProgress();
                     } catch (e) {
                         console.log('Ошибка загрузки из localStorage:', e);
                     }
                 }
+            }
+        }
+        
+        function mergeProgressData(savedHabitData) {
+            if (savedHabitData) {
+                Object.keys(savedHabitData).forEach(habitIndex => {
+                    if (habitData[habitIndex]) {
+                        habitData[habitIndex] = {...habitData[habitIndex], ...savedHabitData[habitIndex]};
+                    }
+                });
             }
         }
 
@@ -1114,7 +1177,7 @@
                 habitData: habitData,
                 month: 'september',
                 year: 2025,
-                version: '3.0'
+                version: '4.0'
             };
 
             if (tgApp?.CloudStorage) {
@@ -1189,6 +1252,7 @@
             }
         }
 
+        // ИСПРАВЛЕН URL ДЛЯ N8N
         function sendToN8N() {
             const userData = {
                 user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
@@ -1202,7 +1266,10 @@
                 year: 2025
             };
 
-            fetch('https://n8n.meemugicopem.ru/webhook/habits-tracker', {
+            console.log('Отправляем в n8n:', userData);
+
+            // ИСПРАВЛЕН URL: webhook-test вместо webhook
+            fetch('https://n8n.meemugicopem.ru/webhook-test/habits-tracker', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1210,7 +1277,16 @@
                 },
                 body: JSON.stringify(userData)
             })
-            .catch(error => console.log('n8n error (ignored):', error));
+            .then(response => {
+                console.log('n8n статус:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('n8n ответ:', data);
+            })
+            .catch(error => {
+                console.log('n8n ошибка:', error);
+            });
         }
 
         // ==================== УТИЛИТЫ ====================
