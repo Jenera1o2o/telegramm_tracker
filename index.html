@@ -266,6 +266,28 @@
             box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
         }
 
+        .btn-save {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            border: 1px solid #f39c12;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.2);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            border: 1px solid #9b59b6;
+        }
+
+        .btn-ai:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.2);
+        }
+
         .btn:active {
             transform: scale(0.98);
         }
@@ -377,6 +399,32 @@
             outline: none;
         }
 
+        /* Индикатор сохранения */
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .save-indicator.error {
+            background: #e74c3c;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -415,6 +463,15 @@
                 min-width: 100px;
                 font-size: 10px;
             }
+
+            .controls {
+                gap: 6px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
         }
 
         @media (max-width: 360px) {
@@ -435,6 +492,9 @@
     </style>
 </head>
 <body>
+    <!-- Индикатор сохранения -->
+    <div id="saveIndicator" class="save-indicator">✅ Прогресс сохранен</div>
+
     <!-- Setup Wizard -->
     <div id="setupWizard" class="setup-wizard" style="display: none;">
         <div class="setup-header">
@@ -546,6 +606,8 @@
             <div class="controls">
                 <button class="btn btn-add" onclick="addNewHabit()">➕ Добавить</button>
                 <button class="btn btn-secondary" onclick="showSetupWizard()">⚙️ Настройки</button>
+                <button class="btn btn-save" onclick="forceSaveProgress()">💾 Сохранить</button>
+                <button class="btn btn-ai" onclick="requestAIAnalysis()">🤖 Анализ ИИ</button>
                 <button class="btn btn-primary" onclick="exportCSV()">📥 CSV</button>
                 <button class="btn btn-primary" onclick="copyData()">📋 Копировать</button>
             </div>
@@ -590,6 +652,170 @@
             { name: "📱 Цифровой детокс", defaultGoal: 20 },
             { name: "🎯 Планирование дня", defaultGoal: 30 }
         ];
+
+        // ==================== ФУНКЦИИ СОХРАНЕНИЯ/ИНДИКАТОРА ====================
+
+        function showSaveIndicator(success = true, message = null) {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = message || (success ? '✅ Прогресс сохранен' : '❌ Ошибка сохранения');
+            indicator.className = `save-indicator ${success ? '' : 'error'} show`;
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        function forceSaveProgress() {
+            console.log('Принудительное сохранение прогресса...');
+            
+            // Обновляем данные из чекбоксов перед сохранением
+            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                const habitIndex = parseInt(checkbox.dataset.habit);
+                const day = parseInt(checkbox.dataset.day);
+                
+                if (habitData[habitIndex] !== undefined) {
+                    habitData[habitIndex][day] = checkbox.checked;
+                }
+            });
+
+            const progressData = {
+                habitData: habitData,
+                lastSaved: new Date().toISOString(),
+                habits: habits,
+                version: '5.0'
+            };
+            
+            console.log('Данные для сохранения:', progressData);
+            
+            let saved = false;
+            let saveMethod = '';
+            
+            // Пробуем все способы сохранения
+            if (tgApp?.CloudStorage) {
+                try {
+                    tgApp.CloudStorage.setItem('habit_progress', JSON.stringify(progressData));
+                    tgApp.CloudStorage.setItem('user_settings', JSON.stringify({
+                        habits: habits,
+                        habitData: habitData,
+                        month: 'september',
+                        year: 2025,
+                        version: '5.0'
+                    }));
+                    console.log('Сохранено в CloudStorage');
+                    saved = true;
+                    saveMethod = 'CloudStorage';
+                } catch (error) {
+                    console.error('Ошибка CloudStorage:', error);
+                }
+            }
+            
+            if (!saved && tgApp?.localStorage) {
+                try {
+                    tgApp.localStorage.setItem('habit_progress', JSON.stringify(progressData));
+                    tgApp.localStorage.setItem('user_settings', JSON.stringify({
+                        habits: habits,
+                        habitData: habitData,
+                        month: 'september',
+                        year: 2025,
+                        version: '5.0'
+                    }));
+                    console.log('Сохранено в Telegram localStorage');
+                    saved = true;
+                    saveMethod = 'Telegram localStorage';
+                } catch (error) {
+                    console.error('Ошибка Telegram localStorage:', error);
+                }
+            }
+            
+            // Fallback в обычный localStorage
+            try {
+                localStorage.setItem('proryv_progress', JSON.stringify(progressData));
+                localStorage.setItem('proryv_settings', JSON.stringify({
+                    habits: habits,
+                    habitData: habitData,
+                    month: 'september',
+                    year: 2025,
+                    version: '5.0'
+                }));
+                console.log('Сохранено в localStorage');
+                if (!saved) {
+                    saved = true;
+                    saveMethod = 'localStorage';
+                }
+            } catch (error) {
+                console.error('Ошибка localStorage:', error);
+            }
+            
+            if (saved) {
+                showSaveIndicator(true, `✅ Сохранено (${saveMethod})`);
+            } else {
+                showSaveIndicator(false, '❌ Ошибка сохранения');
+            }
+        }
+
+        // ==================== АНАЛИЗ ОТ ИИ ====================
+
+        function requestAIAnalysis() {
+            console.log('Запрос анализа от ИИ...');
+            
+            // Сначала принудительно сохраняем текущий прогресс
+            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                const habitIndex = parseInt(checkbox.dataset.habit);
+                const day = parseInt(checkbox.dataset.day);
+                
+                if (habitData[habitIndex] !== undefined) {
+                    habitData[habitIndex][day] = checkbox.checked;
+                }
+            });
+
+            const analysisData = {
+                user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
+                user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Тестовый пользователь',
+                username: tgApp?.initDataUnsafe?.user?.username || null,
+                timestamp: new Date().toISOString(),
+                date: new Date().toISOString().split('T')[0],
+                habits_data: habitData,
+                habits_info: habits,
+                month: 'september',
+                year: 2025,
+                request_type: 'ai_analysis', // Специальный флаг для ИИ анализа
+                analysis_request: 'Пожалуйста, проанализируй мой прогресс за этот месяц и дай персональные рекомендации'
+            };
+
+            console.log('Отправляем запрос анализа в n8n:', analysisData);
+
+            showSaveIndicator(true, '🤖 Запрос к ИИ...');
+
+            fetch('https://n8n.meemugicopem.ru/webhook-test/habits-tracker', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(analysisData)
+            })
+            .then(response => {
+                console.log('ИИ анализ статус:', response.status);
+                if (response.ok) {
+                    showSaveIndicator(true, '✅ Анализ отправлен в ИИ');
+                    if (tgApp) {
+                        tgApp.showAlert('Анализ от ИИ скоро придет в Telegram!');
+                    } else {
+                        alert('Анализ от ИИ скоро придет в Telegram!');
+                    }
+                } else {
+                    showSaveIndicator(false, '❌ Ошибка запроса к ИИ');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('ИИ анализ ответ:', data);
+            })
+            .catch(error => {
+                console.log('ИИ анализ ошибка:', error);
+                showSaveIndicator(false, '❌ Ошибка связи с ИИ');
+            });
+        }
 
         // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
@@ -683,13 +909,12 @@
             
             console.log('Выбрано привычек:', habits.length);
             
-            saveUserSettings();
+            forceSaveProgress(); // Принудительно сохраняем
             goBack();
             
             initializeHabits();
             createHabitsTable();
             
-            // Важно: сначала создаем таблицу, потом инициализируем диаграммы
             setTimeout(() => {
                 initializeCharts();
                 loadProgressData();
@@ -726,7 +951,7 @@
                                class="habit-input" 
                                value="${habit.name}" 
                                onchange="updateHabitName(${habitIndex}, this.value)"
-                               onblur="saveUserSettings()">
+                               onblur="forceSaveProgress()">
                         <span class="delete-habit" onclick="deleteHabit(${habitIndex})" title="Удалить привычку">🗑️</span>
                     </td>
                     <td class="goal-cell">
@@ -735,7 +960,7 @@
                                value="${habit.goal}" 
                                min="1" max="31"
                                onchange="updateHabitGoal(${habitIndex}, this.value)"
-                               onblur="saveUserSettings()">
+                               onblur="forceSaveProgress()">
                     </td>
                 `;
 
@@ -799,7 +1024,7 @@
             setTimeout(() => {
                 restoreCheckboxes();
                 updateProgress();
-                saveUserSettings();
+                forceSaveProgress();
             }, 100);
         }
 
@@ -826,7 +1051,7 @@
                     habitsChart.data.datasets[0].data = habits.map(() => 0);
                     habitsChart.update();
                 }
-                saveUserSettings();
+                forceSaveProgress();
             }, 100);
         }
 
@@ -941,8 +1166,10 @@
             
             console.log('Найдено отмеченных чекбоксов:', checkedCount);
 
-            // Сохраняем прогресс (ИСПРАВЛЕНО)
-            saveProgressData();
+            // Автоматически сохраняем прогресс после каждого изменения
+            setTimeout(() => {
+                forceSaveProgress();
+            }, 500);
 
             // Считаем статистику
             let totalCompleted = 0;
@@ -1027,58 +1254,9 @@
                     console.error('Ошибка обновления гистограммы:', error);
                 }
             }
-
-            // Отправляем в n8n (ИСПРАВЛЕН URL)
-            sendToN8N();
         }
 
         // ==================== СОХРАНЕНИЕ И ЗАГРУЗКА ====================
-
-        function saveProgressData() {
-            const progressData = {
-                habitData: habitData,
-                lastSaved: new Date().toISOString(),
-                habits: habits
-            };
-            
-            console.log('Сохраняем прогресс...', progressData);
-            
-            // Пробуем разные способы сохранения
-            let saved = false;
-            
-            if (tgApp?.CloudStorage) {
-                try {
-                    tgApp.CloudStorage.setItem('habit_progress', JSON.stringify(progressData));
-                    console.log('Прогресс сохранен в CloudStorage');
-                    saved = true;
-                } catch (error) {
-                    console.error('Ошибка сохранения в CloudStorage:', error);
-                }
-            }
-            
-            if (tgApp?.localStorage) {
-                try {
-                    tgApp.localStorage.setItem('habit_progress', JSON.stringify(progressData));
-                    console.log('Прогресс сохранен в Telegram localStorage');
-                    saved = true;
-                } catch (error) {
-                    console.error('Ошибка сохранения в Telegram localStorage:', error);
-                }
-            }
-            
-            // Fallback в обычный localStorage
-            try {
-                localStorage.setItem('proryv_progress', JSON.stringify(progressData));
-                console.log('Прогресс сохранен в обычный localStorage');
-                saved = true;
-            } catch (error) {
-                console.error('Ошибка сохранения в localStorage:', error);
-            }
-            
-            if (!saved) {
-                console.error('НЕ УДАЛОСЬ СОХРАНИТЬ ПРОГРЕСС!');
-            }
-        }
 
         function loadProgressData() {
             console.log('Загружаем прогресс...');
@@ -1168,23 +1346,10 @@
                     }
                 });
                 console.log('Восстановлено галочек:', restoredCount);
+                if (restoredCount > 0) {
+                    showSaveIndicator(true, `✅ Восстановлено ${restoredCount} галочек`);
+                }
             }, 100);
-        }
-
-        function saveUserSettings() {
-            const settings = {
-                habits: habits,
-                habitData: habitData,
-                month: 'september',
-                year: 2025,
-                version: '4.0'
-            };
-
-            if (tgApp?.CloudStorage) {
-                tgApp.CloudStorage.setItem('user_settings', JSON.stringify(settings));
-            } else {
-                localStorage.setItem('proryv_settings', JSON.stringify(settings));
-            }
         }
 
         function loadUserSettings() {
@@ -1250,43 +1415,6 @@
                     showSetupWizard();
                 }
             }
-        }
-
-        // ИСПРАВЛЕН URL ДЛЯ N8N
-        function sendToN8N() {
-            const userData = {
-                user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
-                user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Тестовый пользователь',
-                username: tgApp?.initDataUnsafe?.user?.username || null,
-                timestamp: new Date().toISOString(),
-                date: new Date().toISOString().split('T')[0],
-                habits_data: habitData,
-                habits_info: habits,
-                month: 'september',
-                year: 2025
-            };
-
-            console.log('Отправляем в n8n:', userData);
-
-            // ИСПРАВЛЕН URL: webhook-test вместо webhook
-            fetch('https://n8n.meemugicopem.ru/webhook-test/habits-tracker', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            })
-            .then(response => {
-                console.log('n8n статус:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('n8n ответ:', data);
-            })
-            .catch(error => {
-                console.log('n8n ошибка:', error);
-            });
         }
 
         // ==================== УТИЛИТЫ ====================
