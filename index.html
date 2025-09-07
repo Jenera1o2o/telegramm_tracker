@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Прорыв - Трекер привычек</title>
+    <title>Прорыв - Персональный трекер привычек</title>
     
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -18,8 +18,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: #f8f9fb;
+            color: #2c3e50;
             min-height: 100vh;
             padding: 10px;
             font-size: 14px;
@@ -28,15 +28,16 @@
         .container {
             max-width: 100%;
             margin: 0 auto;
-            background: var(--tg-theme-bg-color, #ffffff);
+            background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 12px rgba(74, 84, 112, 0.1);
         }
 
         .header {
-            background: var(--tg-theme-button-color, #3390ec);
+            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
             padding: 15px;
-            color: var(--tg-theme-button-text-color, #ffffff);
+            color: #ffffff;
             text-align: center;
             position: relative;
         }
@@ -61,26 +62,27 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             padding: 12px;
-            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            background: #f8f9fb;
         }
 
         .stat-card {
-            background: var(--tg-theme-bg-color, #ffffff);
+            background: #ffffff;
             padding: 8px;
             border-radius: 8px;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
+            border: 1px solid #e8eaf0;
         }
 
         .stat-number {
             font-size: 18px;
             font-weight: bold;
-            color: var(--tg-theme-button-color, #3390ec);
+            color: #4a5470;
             margin-bottom: 2px;
         }
 
         .stat-label {
-            color: var(--tg-theme-hint-color, #707579);
+            color: #8891aa;
             font-size: 11px;
         }
 
@@ -96,15 +98,16 @@
         .tracker-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--tg-theme-bg-color, #ffffff);
+            background: #ffffff;
             border-radius: 8px;
             overflow: hidden;
             font-size: 12px;
+            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
         }
 
         .tracker-table th {
-            background: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: #4a5470;
+            color: #ffffff;
             padding: 8px 4px;
             font-weight: 500;
             text-align: center;
@@ -114,11 +117,11 @@
         .tracker-table td {
             padding: 6px 4px;
             text-align: center;
-            border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #f1f1f1);
+            border-bottom: 1px solid #f0f2f5;
         }
 
         .habit-row:hover {
-            background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            background-color: #f8f9fb;
         }
 
         .habit-name {
@@ -127,22 +130,58 @@
             padding-left: 8px !important;
             min-width: 120px;
             font-size: 11px;
+            position: relative;
         }
 
-        .habit-icon {
-            margin-right: 4px;
+        .habit-input {
+            background: transparent;
+            border: none;
+            color: #2c3e50;
+            font-size: 11px;
+            font-weight: 500;
+            width: 100%;
+            outline: none;
         }
 
-        .goal-cell {
+        .habit-input:focus {
+            background: #f8f9fb;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .goal-input {
+            background: transparent;
+            border: none;
+            color: #2c3e50;
+            font-size: 12px;
             font-weight: bold;
-            color: var(--tg-theme-text-color, #000000);
+            width: 30px;
+            text-align: center;
+            outline: none;
+        }
+
+        .goal-input:focus {
+            background: #f8f9fb;
+            border-radius: 4px;
         }
 
         .day-checkbox {
             width: 16px;
             height: 16px;
             cursor: pointer;
-            accent-color: var(--tg-theme-button-color, #3390ec);
+            accent-color: #4a5470;
+        }
+
+        .delete-habit {
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+            display: none;
+        }
+
+        .habit-row:hover .delete-habit {
+            display: inline;
         }
 
         .charts-section {
@@ -152,17 +191,18 @@
         }
 
         .chart-container {
-            background: var(--tg-theme-bg-color, #ffffff);
+            background: #ffffff;
             padding: 12px;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
+            border: 1px solid #e8eaf0;
         }
 
         .chart-title {
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
-            color: var(--tg-theme-text-color, #000000);
+            color: #2c3e50;
             text-align: center;
         }
 
@@ -185,7 +225,7 @@
         .btn {
             padding: 8px 12px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.2s;
@@ -195,13 +235,35 @@
         }
 
         .btn-primary {
-            background: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
+            color: #ffffff;
+            border: 1px solid #4a5470;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(74, 84, 112, 0.2);
         }
 
         .btn-secondary {
-            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
-            color: var(--tg-theme-text-color, #000000);
+            background: #f8f9fb;
+            color: #4a5470;
+            border: 1px solid #e8eaf0;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f2f5;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: 1px solid #27ae60;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
         }
 
         .btn:active {
@@ -209,10 +271,112 @@
         }
 
         .week-separator {
-            border-left: 2px solid var(--tg-theme-secondary-bg-color, #dee2e6) !important;
+            border-left: 2px solid #e8eaf0 !important;
         }
 
-        /* Адаптация под мобильные устройства Telegram */
+        /* Setup Wizard */
+        .setup-wizard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #4a5470;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .back-button:hover {
+            background: #f8f9fb;
+        }
+
+        .setup-section {
+            margin-bottom: 25px;
+        }
+
+        .setup-section h3 {
+            color: #4a5470;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .habit-library {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .habit-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fb;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #e8eaf0;
+            transition: all 0.2s;
+        }
+
+        .habit-option:hover {
+            border-color: #4a5470;
+        }
+
+        .habit-option.selected {
+            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
+            color: #ffffff;
+            border-color: #4a5470;
+        }
+
+        .goal-slider {
+            width: 60px;
+            margin-left: 10px;
+            padding: 4px;
+            border: 1px solid #e8eaf0;
+            border-radius: 4px;
+        }
+
+        .custom-habit {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .custom-habit input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e8eaf0;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #2c3e50;
+        }
+
+        .custom-habit input:focus {
+            border-color: #4a5470;
+            outline: none;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -251,21 +415,8 @@
                 min-width: 100px;
                 font-size: 10px;
             }
-
-            .chart-container {
-                padding: 8px;
-            }
-
-            .progress-overview {
-                height: 150px;
-            }
-
-            .habits-progress {
-                height: 160px;
-            }
         }
 
-        /* Очень маленькие экраны */
         @media (max-width: 360px) {
             .stats-bar {
                 grid-template-columns: 1fr;
@@ -284,7 +435,41 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Setup Wizard -->
+    <div id="setupWizard" class="setup-wizard" style="display: none;">
+        <div class="setup-header">
+            <button class="back-button" onclick="goBack()">←</button>
+            <h2>🚀 Настройка вашего трекера</h2>
+            <p>Выберите привычки из готовых или создайте свои</p>
+        </div>
+
+        <div class="setup-section">
+            <h3>📚 Готовые привычки:</h3>
+            <div id="habitLibrary" class="habit-library">
+                <!-- Будет заполнено JS -->
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h3>✏️ Свои привычки:</h3>
+            <div id="customHabits">
+                <div class="custom-habit">
+                    <input type="text" placeholder="🎯 Моя привычка..." class="custom-habit-input">
+                    <input type="number" value="20" min="1" max="31" class="goal-slider">
+                    <button class="btn btn-add" onclick="addCustomHabit()">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="finishSetup()" class="btn btn-primary" style="padding: 12px 30px; font-size: 16px;">
+                ✅ Начать отслеживание
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="container" id="mainApp">
         <!-- Header -->
         <div class="header">
             <h1>🚀 Прорыв</h1>
@@ -359,51 +544,163 @@
 
             <!-- Controls -->
             <div class="controls">
+                <button class="btn btn-add" onclick="addNewHabit()">➕ Добавить</button>
+                <button class="btn btn-secondary" onclick="showSetupWizard()">⚙️ Настройки</button>
                 <button class="btn btn-primary" onclick="exportCSV()">📥 CSV</button>
-                <button class="btn btn-secondary" onclick="printTracker()">🖨️ Печать</button>
                 <button class="btn btn-primary" onclick="copyData()">📋 Копировать</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
+        // Глобальные переменные
+        let tgApp = null;
+        let habits = [];
+        let habitData = {};
+        const daysInMonth = 30;
+        let progressChart = null;
+        let habitsChart = null;
+        let isInitialized = false;
+
+        console.log('Скрипт загружен');
+
+        // Инициализация Telegram WebApp
         if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-            
-            // Применяем тему Telegram
-            const themeParams = window.Telegram.WebApp.themeParams;
-            if (themeParams.bg_color) {
-                document.body.style.setProperty('--tg-theme-bg-color', themeParams.bg_color);
-            }
-            if (themeParams.text_color) {
-                document.body.style.setProperty('--tg-theme-text-color', themeParams.text_color);
-            }
-            if (themeParams.button_color) {
-                document.body.style.setProperty('--tg-theme-button-color', themeParams.button_color);
-            }
-            if (themeParams.button_text_color) {
-                document.body.style.setProperty('--tg-theme-button-text-color', themeParams.button_text_color);
-            }
+            tgApp = window.Telegram.WebApp;
+            tgApp.ready();
+            tgApp.expand();
+            console.log('Telegram WebApp инициализирован');
         }
 
-        // Habits data
-        const habits = [
-            { name: "🏃‍♂️ Утренняя пробежка", goal: 20, icon: "🏃‍♂️" },
-            { name: "🧘‍♀️ Медитация", goal: 15, icon: "🧘‍♀️" },
-            { name: "🏋️‍♂️ Спортзал", goal: 28, icon: "🏋️‍♂️" },
-            { name: "📚 Чтение", goal: 5, icon: "📚" },
-            { name: "💧 Выпивать 1л воды", goal: 30, icon: "💧" },
-            { name: "🥗 Приём витаминов", goal: 30, icon: "🥗" },
-            { name: "🏠 Уборка квартиры", goal: 10, icon: "🏠" }
+        // Библиотека готовых привычек
+        const habitLibrary = [
+            { name: "🏃‍♂️ Утренняя пробежка", defaultGoal: 20 },
+            { name: "🧘‍♀️ Медитация", defaultGoal: 30 },
+            { name: "🏋️‍♂️ Спортзал", defaultGoal: 15 },
+            { name: "💧 Пить 2л воды", defaultGoal: 30 },
+            { name: "🚶‍♂️ 10000 шагов", defaultGoal: 25 },
+            { name: "📖 Чтение книг", defaultGoal: 20 },
+            { name: "🎧 Подкасты", defaultGoal: 15 },
+            { name: "✍️ Ведение дневника", defaultGoal: 25 },
+            { name: "🧠 Изучение языка", defaultGoal: 20 },
+            { name: "🏠 Уборка дома", defaultGoal: 10 },
+            { name: "🍳 Готовка дома", defaultGoal: 20 },
+            { name: "🛏️ Заправлять кровать", defaultGoal: 30 },
+            { name: "⏰ Подъем в 6:00", defaultGoal: 25 },
+            { name: "📱 Цифровой детокс", defaultGoal: 20 },
+            { name: "🎯 Планирование дня", defaultGoal: 30 }
         ];
 
-        const daysInMonth = 30; // Сентябрь
-        let habitData = {};
+        // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
-        // Initialize habit data
+        function showSetupWizard() {
+            console.log('Показываем мастер настройки');
+            document.getElementById('setupWizard').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            populateHabitLibrary();
+        }
+
+        function goBack() {
+            console.log('Закрываем мастер настройки');
+            document.getElementById('setupWizard').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        }
+
+        function populateHabitLibrary() {
+            const library = document.getElementById('habitLibrary');
+            library.innerHTML = '';
+            
+            habitLibrary.forEach((habit, index) => {
+                const div = document.createElement('div');
+                div.className = 'habit-option';
+                div.onclick = () => toggleHabitSelection(index, div);
+                
+                div.innerHTML = `
+                    <span>${habit.name}</span>
+                    <input type="number" value="${habit.defaultGoal}" min="1" max="31" class="goal-slider" onclick="event.stopPropagation()">
+                `;
+                
+                library.appendChild(div);
+            });
+        }
+
+        function toggleHabitSelection(index, element) {
+            element.classList.toggle('selected');
+            console.log(`Привычка ${index} переключена`);
+        }
+
+        function addCustomHabit() {
+            console.log('Добавляем кастомную привычку');
+            const container = document.getElementById('customHabits');
+            const div = document.createElement('div');
+            div.className = 'custom-habit';
+            
+            div.innerHTML = `
+                <input type="text" placeholder="🎯 Моя привычка..." class="custom-habit-input">
+                <input type="number" value="20" min="1" max="31" class="goal-slider">
+                <button onclick="this.parentElement.remove()" class="btn btn-secondary">−</button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function finishSetup() {
+            console.log('Завершаем настройку...');
+            habits = [];
+            
+            // Добавляем выбранные готовые привычки
+            document.querySelectorAll('.habit-option.selected').forEach(option => {
+                const text = option.querySelector('span').textContent;
+                const goal = parseInt(option.querySelector('.goal-slider').value);
+                
+                habits.push({
+                    name: text,
+                    goal: goal,
+                    icon: text.split(' ')[0]
+                });
+            });
+            
+            // Добавляем кастомные привычки
+            document.querySelectorAll('.custom-habit-input').forEach(input => {
+                if (input.value.trim()) {
+                    const goal = parseInt(input.parentElement.querySelector('.goal-slider').value);
+                    habits.push({
+                        name: input.value.trim(),
+                        goal: goal,
+                        icon: input.value.trim().split(' ')[0] || '📝'
+                    });
+                }
+            });
+            
+            // Если ничего не выбрано, добавляем примеры
+            if (habits.length === 0) {
+                habits = [
+                    { name: "🏃‍♂️ 10000 шагов", goal: 25, icon: "🏃‍♂️" },
+                    { name: "🥗 Здоровое питание", goal: 25, icon: "🥗" },
+                    { name: "📖 Чтение книг", goal: 20, icon: "📖" }
+                ];
+            }
+            
+            console.log('Выбрано привычек:', habits.length);
+            
+            saveUserSettings();
+            goBack();
+            
+            initializeHabits();
+            createHabitsTable();
+            
+            // Важно: сначала создаем таблицу, потом инициализируем диаграммы
+            setTimeout(() => {
+                initializeCharts();
+                loadProgressData();
+                isInitialized = true;
+                console.log('Инициализация завершена');
+            }, 300);
+        }
+
         function initializeHabits() {
+            console.log('Инициализируем данные привычек');
+            habitData = {};
             habits.forEach((habit, habitIndex) => {
                 habitData[habitIndex] = {};
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -412,8 +709,8 @@
             });
         }
 
-        // Create table rows
         function createHabitsTable() {
+            console.log('Создаем таблицу привычек');
             const tbody = document.getElementById('habitsTable');
             tbody.innerHTML = '';
 
@@ -423,10 +720,21 @@
                 
                 let rowHTML = `
                     <td class="habit-name">
-                        <span class="habit-icon">${habit.icon}</span>
-                        ${habit.name.replace(habit.icon, '').trim()}
+                        <input type="text" 
+                               class="habit-input" 
+                               value="${habit.name}" 
+                               onchange="updateHabitName(${habitIndex}, this.value)"
+                               onblur="saveUserSettings()">
+                        <span class="delete-habit" onclick="deleteHabit(${habitIndex})" title="Удалить привычку">🗑️</span>
                     </td>
-                    <td class="goal-cell">${habit.goal}</td>
+                    <td class="goal-cell">
+                        <input type="number" 
+                               class="goal-input" 
+                               value="${habit.goal}" 
+                               min="1" max="31"
+                               onchange="updateHabitGoal(${habitIndex}, this.value)"
+                               onblur="saveUserSettings()">
+                    </td>
                 `;
 
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -447,107 +755,194 @@
                 row.innerHTML = rowHTML;
                 tbody.appendChild(row);
             });
+            
+            console.log('Таблица создана для', habits.length, 'привычек');
         }
 
-        // Charts
-        let progressChart, habitsChart;
+        function updateHabitName(index, name) {
+            habits[index].name = name;
+            habits[index].icon = name.split(' ')[0] || '📝';
+            if (habitsChart) {
+                habitsChart.data.labels = habits.map(h => h.icon);
+                habitsChart.update();
+            }
+        }
+
+        function updateHabitGoal(index, goal) {
+            habits[index].goal = parseInt(goal);
+            updateProgress();
+        }
+
+        function deleteHabit(index) {
+            if (habits.length <= 1) {
+                alert('Нельзя удалить последнюю привычку!');
+                return;
+            }
+            
+            habits.splice(index, 1);
+            
+            // Пересоздаем habitData
+            const newHabitData = {};
+            habits.forEach((habit, newIndex) => {
+                newHabitData[newIndex] = habitData[newIndex >= index ? newIndex + 1 : newIndex] || {};
+                for (let day = 1; day <= daysInMonth; day++) {
+                    if (!newHabitData[newIndex][day]) {
+                        newHabitData[newIndex][day] = false;
+                    }
+                }
+            });
+            habitData = newHabitData;
+            
+            createHabitsTable();
+            setTimeout(() => {
+                restoreCheckboxes();
+                updateProgress();
+                saveUserSettings();
+            }, 100);
+        }
+
+        function addNewHabit() {
+            console.log('Добавляем новую привычку');
+            const newHabit = {
+                name: "📝 Новая привычка",
+                goal: 20,
+                icon: "📝"
+            };
+            
+            habits.push(newHabit);
+            const newIndex = habits.length - 1;
+            habitData[newIndex] = {};
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                habitData[newIndex][day] = false;
+            }
+            
+            createHabitsTable();
+            setTimeout(() => {
+                if (habitsChart) {
+                    habitsChart.data.labels = habits.map(h => h.icon);
+                    habitsChart.data.datasets[0].data = habits.map(() => 0);
+                    habitsChart.update();
+                }
+                saveUserSettings();
+            }, 100);
+        }
 
         function initializeCharts() {
-            // Progress Overview Chart (Pie Chart)
-            const progressCtx = document.getElementById('progressChart').getContext('2d');
-            progressChart = new Chart(progressCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Выполнено', 'Осталось'],
-                    datasets: [{
-                        data: [0, 100],
-                        backgroundColor: [
-                            window.Telegram?.WebApp?.themeParams?.button_color || '#3390ec',
-                            window.Telegram?.WebApp?.themeParams?.secondary_bg_color || '#f1f1f1'
-                        ],
-                        borderWidth: 0,
-                        cutout: '70%'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 15,
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            console.log('Инициализируем диаграммы...');
+            
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js не загружен');
+                return;
+            }
 
-            // Habits Progress Chart (Bar Chart)
-            const habitsCtx = document.getElementById('habitsChart').getContext('2d');
-            habitsChart = new Chart(habitsCtx, {
-                type: 'bar',
-                data: {
-                    labels: habits.map(h => h.icon),
-                    datasets: [{
-                        label: 'Прогресс (%)',
-                        data: habits.map(() => 0),
-                        backgroundColor: window.Telegram?.WebApp?.themeParams?.button_color || '#3390ec',
-                        borderColor: window.Telegram?.WebApp?.themeParams?.button_color || '#3390ec',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                },
-                                font: {
-                                    size: 10
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        }
+            try {
+                // Progress Overview Chart
+                const progressCtx = document.getElementById('progressChart').getContext('2d');
+                if (progressChart) {
+                    progressChart.destroy();
+                }
+                
+                progressChart = new Chart(progressCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Выполнено', 'Осталось'],
+                        datasets: [{
+                            data: [0, 100],
+                            backgroundColor: ['#4a5470', '#e8eaf0'],
+                            borderWidth: 0,
+                            cutout: '70%'
+                        }]
                     },
-                    plugins: {
-                        legend: {
-                            display: false
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    font: { size: 12 }
+                                }
+                            }
                         }
                     }
+                });
+                console.log('Круговая диаграмма создана');
+
+                // Habits Progress Chart
+                const habitsCtx = document.getElementById('habitsChart').getContext('2d');
+                if (habitsChart) {
+                    habitsChart.destroy();
                 }
-            });
+                
+                habitsChart = new Chart(habitsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: habits.map(h => h.icon),
+                        datasets: [{
+                            label: 'Прогресс (%)',
+                            data: habits.map(() => 0),
+                            backgroundColor: '#4a5470',
+                            borderColor: '#6c7b95',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) { return value + '%'; },
+                                    font: { size: 10 }
+                                }
+                            },
+                            x: { ticks: { font: { size: 12 } } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                console.log('Гистограмма создана');
+                
+            } catch (error) {
+                console.error('Ошибка создания диаграмм:', error);
+            }
         }
 
-        // Update progress and send to n8n
+        // ГЛАВНАЯ ФУНКЦИЯ - ОБНОВЛЕНИЕ ПРОГРЕССА
         function updateProgress() {
-            // Update habit data from checkboxes
+            console.log('Обновляем прогресс...');
+            
+            if (!isInitialized) {
+                console.log('Приложение не инициализировано, пропускаем обновление');
+                return;
+            }
+            
+            // Обновляем данные из чекбоксов
+            let checkedCount = 0;
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const habitIndex = parseInt(checkbox.dataset.habit);
                 const day = parseInt(checkbox.dataset.day);
-                habitData[habitIndex][day] = checkbox.checked;
+                
+                if (habitData[habitIndex] !== undefined) {
+                    habitData[habitIndex][day] = checkbox.checked;
+                    if (checkbox.checked) {
+                        checkedCount++;
+                    }
+                }
             });
+            
+            console.log('Найдено отмеченных чекбоксов:', checkedCount);
 
-            // Send data to n8n
-            sendToN8N();
+            // Сохраняем прогресс
+            saveProgressData();
 
-            // Calculate statistics
+            // Считаем статистику
             let totalCompleted = 0;
             let totalPossible = 0;
             const habitProgress = [];
@@ -555,28 +950,30 @@
             habits.forEach((habit, habitIndex) => {
                 let completed = 0;
                 for (let day = 1; day <= daysInMonth; day++) {
-                    if (habitData[habitIndex][day]) {
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
                         completed++;
                         totalCompleted++;
                     }
                     totalPossible++;
                 }
-                const progress = (completed / habit.goal) * 100;
+                const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
                 habitProgress.push(Math.min(progress, 100));
             });
 
             const averageProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
             
-            // Find best habit
+            console.log(`Статистика: выполнено ${totalCompleted} из ${totalPossible} (${averageProgress}%)`);
+            
+            // Находим лучшую привычку
             const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
             const bestHabit = habits[bestHabitIndex];
 
-            // Calculate current streak
+            // Считаем текущую серию
             let currentStreak = 0;
             for (let day = daysInMonth; day >= 1; day--) {
                 let dayComplete = false;
                 habits.forEach((habit, habitIndex) => {
-                    if (habitData[habitIndex][day]) {
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
                         dayComplete = true;
                     }
                 });
@@ -587,26 +984,216 @@
                 }
             }
 
-            // Update statistics display
-            document.getElementById('totalCompleted').textContent = totalCompleted;
-            document.getElementById('averageProgress').textContent = averageProgress + '%';
-            document.getElementById('bestHabit').textContent = bestHabit ? bestHabit.icon : '📊';
-            document.getElementById('currentStreak').textContent = currentStreak;
+            // Обновляем отображение статистики
+            const totalCompletedEl = document.getElementById('totalCompleted');
+            const averageProgressEl = document.getElementById('averageProgress');
+            const bestHabitEl = document.getElementById('bestHabit');
+            const currentStreakEl = document.getElementById('currentStreak');
+            
+            if (totalCompletedEl) {
+                totalCompletedEl.textContent = totalCompleted;
+                console.log('Обновлено totalCompleted:', totalCompleted);
+            }
+            if (averageProgressEl) {
+                averageProgressEl.textContent = averageProgress + '%';
+                console.log('Обновлено averageProgress:', averageProgress + '%');
+            }
+            if (bestHabitEl) {
+                bestHabitEl.textContent = bestHabit ? bestHabit.icon : '📊';
+            }
+            if (currentStreakEl) {
+                currentStreakEl.textContent = currentStreak;
+            }
 
-            // Update charts
-            progressChart.data.datasets[0].data = [averageProgress, 100 - averageProgress];
-            progressChart.update();
+            // Обновляем диаграммы
+            if (progressChart) {
+                try {
+                    progressChart.data.datasets[0].data = [averageProgress, 100 - averageProgress];
+                    progressChart.update();
+                    console.log('Круговая диаграмма обновлена');
+                } catch (error) {
+                    console.error('Ошибка обновления круговой диаграммы:', error);
+                }
+            }
 
-            habitsChart.data.datasets[0].data = habitProgress;
-            habitsChart.update();
+            if (habitsChart && habitProgress.length > 0) {
+                try {
+                    habitsChart.data.datasets[0].data = habitProgress;
+                    habitsChart.update();
+                    console.log('Гистограмма обновлена');
+                } catch (error) {
+                    console.error('Ошибка обновления гистограммы:', error);
+                }
+            }
+
+            // Отправляем в n8n
+            sendToN8N();
         }
 
-        // Send data to n8n webhook
+        // ==================== СОХРАНЕНИЕ И ЗАГРУЗКА ====================
+
+        function saveProgressData() {
+            const progressData = {
+                habitData: habitData,
+                lastSaved: new Date().toISOString(),
+                habits: habits
+            };
+            
+            if (tgApp?.CloudStorage) {
+                tgApp.CloudStorage.setItem('habit_progress', JSON.stringify(progressData));
+                console.log('Прогресс сохранен в CloudStorage');
+            } else {
+                localStorage.setItem('proryv_progress', JSON.stringify(progressData));
+                console.log('Прогресс сохранен в localStorage');
+            }
+        }
+
+        function loadProgressData() {
+            console.log('Загружаем прогресс...');
+            
+            if (tgApp?.CloudStorage) {
+                tgApp.CloudStorage.getItem('habit_progress', (error, data) => {
+                    if (data && !error) {
+                        try {
+                            const savedData = JSON.parse(data);
+                            // Сливаем сохраненные данные с текущими
+                            Object.keys(savedData.habitData || {}).forEach(habitIndex => {
+                                if (habitData[habitIndex]) {
+                                    habitData[habitIndex] = {...habitData[habitIndex], ...savedData.habitData[habitIndex]};
+                                }
+                            });
+                            console.log('Прогресс загружен из CloudStorage');
+                            restoreCheckboxes();
+                            updateProgress();
+                        } catch (e) {
+                            console.log('Ошибка загрузки прогресса:', e);
+                        }
+                    }
+                });
+            } else {
+                const savedData = localStorage.getItem('proryv_progress');
+                if (savedData) {
+                    try {
+                        const data = JSON.parse(savedData);
+                        Object.keys(data.habitData || {}).forEach(habitIndex => {
+                            if (habitData[habitIndex]) {
+                                habitData[habitIndex] = {...habitData[habitIndex], ...data.habitData[habitIndex]};
+                            }
+                        });
+                        console.log('Прогресс загружен из localStorage');
+                        restoreCheckboxes();
+                        updateProgress();
+                    } catch (e) {
+                        console.log('Ошибка загрузки из localStorage:', e);
+                    }
+                }
+            }
+        }
+
+        function restoreCheckboxes() {
+            console.log('Восстанавливаем галочки...');
+            let restoredCount = 0;
+            
+            setTimeout(() => {
+                document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                    const habitIndex = parseInt(checkbox.dataset.habit);
+                    const day = parseInt(checkbox.dataset.day);
+                    
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                        checkbox.checked = true;
+                        restoredCount++;
+                    }
+                });
+                console.log('Восстановлено галочек:', restoredCount);
+            }, 100);
+        }
+
+        function saveUserSettings() {
+            const settings = {
+                habits: habits,
+                habitData: habitData,
+                month: 'september',
+                year: 2025,
+                version: '3.0'
+            };
+
+            if (tgApp?.CloudStorage) {
+                tgApp.CloudStorage.setItem('user_settings', JSON.stringify(settings));
+            } else {
+                localStorage.setItem('proryv_settings', JSON.stringify(settings));
+            }
+        }
+
+        function loadUserSettings() {
+            console.log('Загружаем настройки пользователя...');
+            
+            if (tgApp?.CloudStorage) {
+                tgApp.CloudStorage.getItem('user_settings', (error, data) => {
+                    if (data && !error) {
+                        try {
+                            const settings = JSON.parse(data);
+                            habits = settings.habits || [];
+                            habitData = settings.habitData || {};
+                            
+                            console.log('Загружено привычек:', habits.length);
+                            
+                            if (habits.length > 0) {
+                                initializeHabits();
+                                createHabitsTable();
+                                setTimeout(() => {
+                                    initializeCharts();
+                                    loadProgressData();
+                                    isInitialized = true;
+                                }, 300);
+                            } else {
+                                showSetupWizard();
+                            }
+                        } catch (e) {
+                            console.log('Ошибка парсинга настроек, показываем мастер');
+                            showSetupWizard();
+                        }
+                    } else {
+                        console.log('Настройки не найдены, показываем мастер');
+                        showSetupWizard();
+                    }
+                });
+            } else {
+                const data = localStorage.getItem('proryv_settings');
+                if (data) {
+                    try {
+                        const settings = JSON.parse(data);
+                        habits = settings.habits || [];
+                        habitData = settings.habitData || {};
+                        
+                        console.log('Загружено привычек:', habits.length);
+                        
+                        if (habits.length > 0) {
+                            initializeHabits();
+                            createHabitsTable();
+                            setTimeout(() => {
+                                initializeCharts();
+                                loadProgressData();
+                                isInitialized = true;
+                            }, 300);
+                        } else {
+                            showSetupWizard();
+                        }
+                    } catch (e) {
+                        console.log('Ошибка парсинга настроек localStorage');
+                        showSetupWizard();
+                    }
+                } else {
+                    console.log('Настройки не найдены в localStorage');
+                    showSetupWizard();
+                }
+            }
+        }
+
         function sendToN8N() {
             const userData = {
-                user_id: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'test_user',
-                user_name: window.Telegram?.WebApp?.initDataUnsafe?.user?.first_name || 'Тестовый пользователь',
-                username: window.Telegram?.WebApp?.initDataUnsafe?.user?.username || null,
+                user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
+                user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Тестовый пользователь',
+                username: tgApp?.initDataUnsafe?.user?.username || null,
                 timestamp: new Date().toISOString(),
                 date: new Date().toISOString().split('T')[0],
                 habits_data: habitData,
@@ -618,20 +1205,16 @@
             fetch('https://n8n.meemugicopem.ru/webhook/habits-tracker', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(userData)
             })
-            .then(response => {
-                console.log('Данные отправлены в n8n:', response.status);
-                return response.json();
-            })
-            .catch(error => {
-                console.log('Данные отправлены в n8n (ошибка сети игнорируется)');
-            });
+            .catch(error => console.log('n8n error (ignored):', error));
         }
 
-        // Export functions
+        // ==================== УТИЛИТЫ ====================
+
         function exportCSV() {
             let csv = 'Привычка,Цель';
             for (let day = 1; day <= daysInMonth; day++) {
@@ -642,7 +1225,7 @@
             habits.forEach((habit, habitIndex) => {
                 csv += `"${habit.name}",${habit.goal}`;
                 for (let day = 1; day <= daysInMonth; day++) {
-                    csv += ',' + (habitData[habitIndex][day] ? '1' : '0');
+                    csv += ',' + ((habitData[habitIndex] && habitData[habitIndex][day]) ? '1' : '0');
                 }
                 csv += '\n';
             });
@@ -652,33 +1235,31 @@
             const a = document.createElement('a');
             a.href = url;
             a.download = 'proryv-habits-september-2025.csv';
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         }
 
-        function printTracker() {
-            window.print();
-        }
-
         function copyData() {
-            let text = 'Прорыв - Трекер привычек\\n\\n';
-            text += 'Статистика:\\n';
-            text += `Выполнено заданий: ${document.getElementById('totalCompleted').textContent}\\n`;
-            text += `Средний прогресс: ${document.getElementById('averageProgress').textContent}\\n`;
-            text += `Текущая серия: ${document.getElementById('currentStreak').textContent} дней\\n\\n`;
+            let text = 'Прорыв - Персональный трекер привычек\n\n';
+            text += 'Статистика:\n';
+            text += `Выполнено заданий: ${document.getElementById('totalCompleted').textContent}\n`;
+            text += `Средний прогресс: ${document.getElementById('averageProgress').textContent}\n`;
+            text += `Текущая серия: ${document.getElementById('currentStreak').textContent} дней\n\n`;
             
             habits.forEach((habit, habitIndex) => {
                 let completed = 0;
                 for (let day = 1; day <= daysInMonth; day++) {
-                    if (habitData[habitIndex][day]) completed++;
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) completed++;
                 }
-                text += `${habit.name}: ${completed}/${habit.goal} дней\\n`;
+                text += `${habit.name}: ${completed}/${habit.goal} дней\n`;
             });
 
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {
-                    if (window.Telegram?.WebApp) {
-                        window.Telegram.WebApp.showAlert('Данные скопированы в буфер обмена!');
+                    if (tgApp) {
+                        tgApp.showAlert('Данные скопированы в буфер обмена!');
                     } else {
                         alert('Данные скопированы в буфер обмена!');
                     }
@@ -686,12 +1267,16 @@
             }
         }
 
-        // Initialize everything
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+
         document.addEventListener('DOMContentLoaded', function() {
-            initializeHabits();
-            createHabitsTable();
-            initializeCharts();
-            updateProgress();
+            console.log('DOM загружен, начинаем инициализацию...');
+            
+            // Даем время на загрузку всех ресурсов, особенно Chart.js
+            setTimeout(() => {
+                console.log('Запускаем loadUserSettings');
+                loadUserSettings();
+            }, 500);
         });
     </script>
 </body>
