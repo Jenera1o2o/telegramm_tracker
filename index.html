@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер привычек - Июль</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .chart-section {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .chart-container {
+            background: #f8faff;
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .progress-overview {
+            max-width: 400px;
+        }
+        
+        .month-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .month-selector select {
+            font-size: 1.2em;
+            padding: 8px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            color: #4a5568;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            border: 1px solid #5a67d8;
+        }
+        
+        td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .habit-name {
+            text-align: left;
+            font-weight: bold;
+            color: #4a5568;
+            background: #f7fafc;
+            min-width: 200px;
+            padding: 12px 15px;
+        }
+        
+        .goals {
+            background: #f0fff4;
+            font-weight: bold;
+            color: #22543d;
+            min-width: 60px;
+        }
+        
+        .checkbox-container {
+            width: 35px;
+            height: 35px;
+            background: #f8faff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .checkbox-container:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+            transform: scale(1.05);
+        }
+        
+        .checkbox-container.checked {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border-color: #38a169;
+            color: white;
+        }
+        
+        .checkbox-container.checked:before {
+            content: '✓';
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .week-header {
+            background: linear-gradient(135deg, #4299e1, #3182ce) !important;
+            font-size: 1em;
+        }
+        
+        .day-number {
+            font-size: 0.85em;
+            color: #718096;
+            background: #edf2f7;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .export-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .chart-section {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Трекер привычек</h1>
+        
+        <div class="month-selector">
+            <select id="monthSelect" onchange="updateMonth()">
+                <option value="июль">Июль</option>
+                <option value="август">Август</option>
+                <option value="сентябрь">Сентябрь</option>
+                <option value="октябрь">Октябрь</option>
+                <option value="ноябрь">Ноябрь</option>
+                <option value="декабрь">Декабрь</option>
+            </select>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-container progress-overview">
+                <div class="chart-title">Обзор прогресса</div>
+                <canvas id="progressChart" width="300" height="300"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">Детальная статистика по привычкам</div>
+                <canvas id="detailChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCompleted">0</div>
+                <div class="stat-label">Выполнено заданий</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="averageProgress">0%</div>
+                <div class="stat-label">Средний прогресс</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestHabit">-</div>
+                <div class="stat-label">Лучшая привычка</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Дней подряд</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="vertical-align: middle;">повседневные<br>привычки</th>
+                        <th rowspan="2" style="vertical-align: middle;">цели<br>в<br>днях</th>
+                        <th colspan="7" class="week-header">неделя 1</th>
+                        <th colspan="7" class="week-header">неделя 2</th>
+                        <th colspan="7" class="week-header">неделя 3</th>
+                        <th colspan="7" class="week-header">неделя 4</th>
+                        <th colspan="3" class="week-header">неделя 5</th>
+                    </tr>
+                    <tr>
+                        <th class="day-number">1</th><th class="day-number">2</th><th class="day-number">3</th><th class="day-number">4</th><th class="day-number">5</th><th class="day-number">6</th><th class="day-number">7</th>
+                        <th class="day-number">8</th><th class="day-number">9</th><th class="day-number">10</th><th class="day-number">11</th><th class="day-number">12</th><th class="day-number">13</th><th class="day-number">14</th>
+                        <th class="day-number">15</th><th class="day-number">16</th><th class="day-number">17</th><th class="day-number">18</th><th class="day-number">19</th><th class="day-number">20</th><th class="day-number">21</th>
+                        <th class="day-number">22</th><th class="day-number">23</th><th class="day-number">24</th><th class="day-number">25</th><th class="day-number">26</th><th class="day-number">27</th><th class="day-number">28</th>
+                        <th class="day-number">29</th><th class="day-number">30</th><th class="day-number">31</th>
+                    </tr>
+                </thead>
+                <tbody id="habitTable">
+                    <!-- Строки будут добавлены JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="export-buttons">
+            <button class="btn" onclick="exportToCSV()">📥 Скачать CSV</button>
+            <button class="btn" onclick="printTable()">🖨️ Печать</button>
+            <button class="btn" onclick="copyToClipboard()">📋 Копировать данные</button>
+        </div>
+    </div>
+
+    <script>
+        // Данные привычек
+        const habits = [
+            { name: '🌅 Утренняя пробежка', goal: 20, icon: '🏃' },
+            { name: '🧘 Медитация', goal: 15, icon: '🧘' },
+            { name: '⚽ Спортзал', goal: 28, icon: '💪' },
+            { name: '🍎 Здоровое питание', goal: 5, icon: '🥗' },
+            { name: '💧 Выпивать 1л воды', goal: 30, icon: '💧' },
+            { name: '💊 Приём витаминов', goal: 30, icon: '💊' },
+            { name: '🏠 Уборка квартиры', goal: 10, icon: '🧹' }
+        ];
+
+        // Хранилище данных (имитация localStorage для демонстрации)
+        let habitData = {};
+
+        // Инициализация данных
+        function initializeData() {
+            habits.forEach((habit, habitIndex) => {
+                if (!habitData[habitIndex]) {
+                    habitData[habitIndex] = {};
+                    for (let day = 1; day <= 31; day++) {
+                        habitData[habitIndex][day] = false;
+                    }
+                }
+            });
+        }
+
+        // Создание таблицы
+        function createTable() {
+            const tbody = document.getElementById('habitTable');
+            tbody.innerHTML = '';
+
+            habits.forEach((habit, habitIndex) => {
+                const row = document.createElement('tr');
+                
+                // Название привычки
+                const nameCell = document.createElement('td');
+                nameCell.className = 'habit-name';
+                nameCell.textContent = habit.name;
+                row.appendChild(nameCell);
+
+                // Цель
+                const goalCell = document.createElement('td');
+                goalCell.className = 'goals';
+                goalCell.textContent = habit.goal;
+                row.appendChild(goalCell);
+
+                // Дни месяца (1-31)
+                for (let day = 1; day <= 31; day++) {
+                    const dayCell = document.createElement('td');
+                    const checkbox = document.createElement('div');
+                    checkbox.className = 'checkbox-container';
+                    checkbox.onclick = () => toggleHabit(habitIndex, day);
+                    
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                        checkbox.classList.add('checked');
+                    }
+                    
+                    dayCell.appendChild(checkbox);
+                    row.appendChild(dayCell);
+                }
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Переключение привычки
+        function toggleHabit(habitIndex, day) {
+            if (!habitData[habitIndex]) habitData[habitIndex] = {};
+            habitData[habitIndex][day] = !habitData[habitIndex][day];
+            
+            // Обновляем визуальное состояние
+            createTable();
+            updateCharts();
+            updateStats();
+        }
+
+        // Подсчет выполненных дней для привычки
+        function getCompletedDays(habitIndex) {
+            if (!habitData[habitIndex]) return 0;
+            return Object.values(habitData[habitIndex]).filter(Boolean).length;
+        }
+
+        // Обновление диаграмм
+        let progressChart, detailChart;
+
+        function updateCharts() {
+            updateProgressChart();
+            updateDetailChart();
+        }
+
+        function updateProgressChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            
+            const totalTasks = habits.reduce((sum, habit) => sum + habit.goal, 0);
+            const completedTasks = habits.reduce((sum, habit, index) => sum + getCompletedDays(index), 0);
+            const remaining = totalTasks - completedTasks;
+
+            if (progressChart) {
+                progressChart.destroy();
+            }
+
+            progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Выполнено', 'Осталось'],
+                    datasets: [{
+                        data: [completedTasks, remaining],
+                        backgroundColor: ['#48bb78', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateDetailChart() {
+            const ctx = document.getElementById('detailChart').getContext('2d');
+            
+            const labels = habits.map(h => h.name.split(' ')[1] || h.name);
+            const completed = habits.map((habit, index) => getCompletedDays(index));
+            const goals = habits.map(h => h.goal);
+
+            if (detailChart) {
+                detailChart.destroy();
+            }
+
+            detailChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Выполнено',
+                        data: completed,
+                        backgroundColor: '#667eea',
+                        borderRadius: 8
+                    }, {
+                        label: 'Цель',
+                        data: goals,
+                        backgroundColor: '#e2e8f0',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const totalCompleted = habits.reduce((sum, habit, index) => sum + getCompletedDays(index), 0);
+            const totalGoals = habits.reduce((sum, habit) => sum + habit.goal, 0);
+            const averageProgress = totalGoals > 0 ? Math.round((totalCompleted / totalGoals) * 100) : 0;
+            
+            // Находим лучшую привычку
+            let bestHabitIndex = 0;
+            let bestProgress = 0;
+            habits.forEach((habit, index) => {
+                const progress = getCompletedDays(index) / habit.goal;
+                if (progress > bestProgress) {
+                    bestProgress = progress;
+                    bestHabitIndex = index;
+                }
+            });
+
+            document.getElementById('totalCompleted').textContent = totalCompleted;
+            document.getElementById('averageProgress').textContent = averageProgress + '%';
+            document.getElementById('bestHabit').textContent = habits[bestHabitIndex].icon;
+            document.getElementById('streak').textContent = calculateStreak();
+        }
+
+        // Подсчет текущей серии дней
+        function calculateStreak() {
+            let streak = 0;
+            for (let day = 31; day >= 1; day--) {
+                let dayCompleted = false;
+                habits.forEach((habit, index) => {
+                    if (habitData[index] && habitData[index][day]) {
+                        dayCompleted = true;
+                    }
+                });
+                if (dayCompleted) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        // Экспорт функции
+        function exportToCSV() {
+            let csv = 'Привычка,Цель,';
+            for (let day = 1; day <= 31; day++) {
+                csv += `День ${day},`;
+            }
+            csv = csv.slice(0, -1) + '\n';
+
+            habits.forEach((habit, index) => {
+                csv += `"${habit.name}",${habit.goal},`;
+                for (let day = 1; day <= 31; day++) {
+                    csv += (habitData[index] && habitData[index][day]) ? '1,' : '0,';
+                }
+                csv = csv.slice(0, -1) + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'tracker_privychek.csv';
+            link.click();
+        }
+
+        function printTable() {
+            window.print();
+        }
+
+        function copyToClipboard() {
+            const table = document.querySelector('table');
+            const range = document.createRange();
+            range.selectNode(table);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('Таблица скопирована в буфер обмена!');
+        }
+
+        function updateMonth() {
+            const month = document.getElementById('monthSelect').value;
+            document.querySelector('h1').textContent = `📊 Трекер привычек - ${month.charAt(0).toUpperCase() + month.slice(1)}`;
+        }
+
+        // Инициализация при загрузке
+        window.onload = function() {
+            initializeData();
+            createTable();
+            updateCharts();
+            updateStats();
+        };
+      // Добавьте этот код в ваш HTML файл на GitHub
+// Поместите в секцию <script> перед закрывающим </script>
+
+// URL вашего n8n webhook'а - ЗАМЕНИТЕ НА СВОЙ!
+const N8N_WEBHOOK_URL = 'https://n8n.meemugicopem.ru/webhook/habits-tracker';
+
+// Инициализация Telegram Web App
+let tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+// Получение данных пользователя
+const user = tg.initDataUnsafe?.user;
+console.log('Пользователь:', user);
+
+// Функция отправки данных в n8n
+async function sendToN8N(data) {
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...data,
+                user_id: user?.id,
+                user_name: user?.first_name,
+                timestamp: new Date().toISOString()
+            })
+        });
+        
+        if (response.ok) {
+            console.log('Данные отправлены в n8n');
+            // Показываем уведомление пользователю
+            tg.showAlert('✅ Данные сохранены!');
+        } else {
+            console.error('Ошибка отправки в n8n');
+        }
+    } catch (error) {
+        console.error('Ошибка подключения к n8n:', error);
+    }
+}
+
+// Функция загрузки данных из n8n
+async function loadFromN8N(userId) {
+    try {
+        const response = await fetch(`${N8N_WEBHOOK_URL}/get?user_id=${userId}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки из n8n:', error);
+    }
+    return null;
+}
+
+// Функция отметки привычки (добавьте к существующей логике галочек)
+function markHabitComplete(habitId, day, completed) {
+    // Ваша существующая логика отметки галочек
+    
+    // Отправляем данные в n8n
+    sendToN8N({
+        action: 'mark_habit',
+        habit_id: habitId,
+        day: day,
+        completed: completed,
+        date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    });
+}
+
+// Функция отправки всех данных (для кнопки "Сохранить")
+function saveAllProgress() {
+    // Соберите все данные о привычках из вашего интерфейса
+    const allHabitsData = {
+        action: 'save_all_habits',
+        habits: [
+            // Пример структуры - адаптируйте под свои данные
+            {
+                id: 'morning_run',
+                name: 'Утренняя пробежка',
+                completed_days: [1, 3, 5, 7], // дни когда выполнена
+                streak: 4,
+                total_days: 30
+            },
+            {
+                id: 'meditation',
+                name: 'Медитация',
+                completed_days: [1, 2, 4, 6],
+                streak: 2,
+                total_days: 30
+            }
+            // добавьте остальные привычки
+        ]
+    };
+    
+    sendToN8N(allHabitsData);
+}
+
+// Загрузка данных при запуске приложения
+window.addEventListener('DOMContentLoaded', async () => {
+    if (user?.id) {
+        const savedData = await loadFromN8N(user.id);
+        if (savedData) {
+            // Восстановите состояние интерфейса из сохраненных данных
+            console.log('Загруженные данные:', savedData);
+            // Здесь добавьте код для обновления галочек в интерфейсе
+        }
+    }
+});
+
+// Кнопка закрытия приложения
+tg.MainButton.setText('Сохранить и закрыть');
+tg.MainButton.show();
+tg.MainButton.onClick(() => {
+    saveAllProgress();
+    setTimeout(() => {
+        tg.close();
+    }, 1000);
+});
+    </script>
+</body>
+</html>
