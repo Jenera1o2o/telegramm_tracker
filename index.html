@@ -18,8 +18,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f23;
-            color: #ffffff;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
             min-height: 100vh;
             padding: 10px;
             font-size: 14px;
@@ -28,11 +28,11 @@
         .container {
             max-width: 100%;
             margin: 0 auto;
-            background: #1a1a2e;
+            background: #ffffff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(32, 178, 170, 0.1);
-            border: 1px solid #16213e;
+            box-shadow: 0 10px 40px rgba(30, 41, 59, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .header {
@@ -47,12 +47,12 @@
             font-size: 24px;
             margin-bottom: 8px;
             font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .month-selector {
             display: inline-block;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
@@ -65,23 +65,23 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             padding: 16px;
-            background: #0f0f23;
+            background: #f8fafc;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             padding: 16px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-            border: 1px solid #20b2aa20;
+            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
+            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(32, 178, 170, 0.15);
             border-color: #20b2aa;
-            box-shadow: 0 8px 24px rgba(32, 178, 170, 0.2);
         }
 
         .stat-number {
@@ -92,13 +92,13 @@
         }
 
         .stat-label {
-            color: #a0a0a0;
+            color: #64748b;
             font-size: 11px;
         }
 
         .main-content {
             padding: 16px;
-            background: #0f0f23;
+            background: #ffffff;
         }
 
         .tracker-section {
@@ -109,12 +109,12 @@
         .tracker-table {
             width: 100%;
             border-collapse: collapse;
-            background: #1a1a2e;
+            background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
             font-size: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-            border: 1px solid #16213e;
+            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
+            border: 1px solid #e2e8f0;
         }
 
         .tracker-table th {
@@ -129,12 +129,12 @@
         .tracker-table td {
             padding: 8px 6px;
             text-align: center;
-            border-bottom: 1px solid #16213e;
-            background: #1a1a2e;
+            border-bottom: 1px solid #f1f5f9;
+            background: #ffffff;
         }
 
         .habit-row:hover {
-            background-color: #16213e;
+            background-color: #f8fafc;
         }
 
         .habit-name {
@@ -144,12 +144,13 @@
             min-width: 120px;
             font-size: 11px;
             position: relative;
+            color: #1e293b;
         }
 
         .habit-input {
             background: transparent;
             border: none;
-            color: #ffffff;
+            color: #1e293b;
             font-size: 11px;
             font-weight: 500;
             width: 100%;
@@ -157,7 +158,7 @@
         }
 
         .habit-input:focus {
-            background: #16213e;
+            background: #f1f5f9;
             padding: 4px;
             border-radius: 6px;
         }
@@ -174,7 +175,7 @@
         }
 
         .goal-input:focus {
-            background: #16213e;
+            background: #f1f5f9;
             border-radius: 4px;
         }
 
@@ -186,7 +187,7 @@
         }
 
         .delete-habit {
-            color: #ff6b6b;
+            color: #ef4444;
             cursor: pointer;
             font-size: 12px;
             margin-left: 5px;
@@ -204,18 +205,18 @@
         }
 
         .chart-container {
-            background: #1a1a2e;
+            background: #ffffff;
             padding: 16px;
             border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-            border: 1px solid #16213e;
+            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
+            border: 1px solid #e2e8f0;
         }
 
         .chart-title {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 12px;
-            color: #20b2aa;
+            color: #1e293b;
             text-align: center;
         }
 
@@ -261,48 +262,49 @@
         }
 
         .btn-secondary {
-            background: #16213e;
-            color: #ffffff;
-            border: 1px solid #20b2aa40;
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
         }
 
         .btn-secondary:hover {
-            background: #1a1a2e;
+            background: #f1f5f9;
             border-color: #20b2aa;
+            color: #20b2aa;
             transform: translateY(-1px);
         }
 
         .btn-add {
-            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: #ffffff;
             border: 1px solid transparent;
         }
 
         .btn-add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: #ffffff;
             border: 1px solid transparent;
         }
 
         .btn-save:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
         }
 
         .btn-ai {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
             color: #ffffff;
             border: 1px solid transparent;
         }
 
         .btn-ai:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
         }
 
         .btn:active {
@@ -320,7 +322,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0f0f23;
+            background: #ffffff;
             z-index: 1000;
             padding: 20px;
             overflow-y: auto;
@@ -336,19 +338,20 @@
             position: absolute;
             left: 0;
             top: 0;
-            background: #16213e;
-            border: 1px solid #20b2aa40;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             font-size: 20px;
             cursor: pointer;
-            color: #ffffff;
+            color: #475569;
             padding: 12px;
             border-radius: 12px;
             transition: all 0.3s ease;
         }
 
         .back-button:hover {
-            background: #1a1a2e;
+            background: #f1f5f9;
             border-color: #20b2aa;
+            color: #20b2aa;
         }
 
         .setup-section {
@@ -356,7 +359,7 @@
         }
 
         .setup-section h3 {
-            color: #20b2aa;
+            color: #1e293b;
             margin-bottom: 16px;
             font-size: 18px;
         }
@@ -372,20 +375,21 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background: #16213e;
+            background: #f8fafc;
             border-radius: 12px;
             cursor: pointer;
-            border: 1px solid #20b2aa20;
+            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
         }
 
         .habit-option:hover {
             border-color: #20b2aa;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(32, 178, 170, 0.1);
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #20b2aa20 0%, #1e90ff20 100%);
+            background: linear-gradient(135deg, #20b2aa10 0%, #1e90ff10 100%);
             border-color: #20b2aa;
         }
 
@@ -393,10 +397,10 @@
             width: 60px;
             margin-left: 10px;
             padding: 6px;
-            border: 1px solid #20b2aa40;
+            border: 1px solid #e2e8f0;
             border-radius: 6px;
-            background: #1a1a2e;
-            color: #ffffff;
+            background: #ffffff;
+            color: #1e293b;
         }
 
         .custom-habit {
@@ -409,15 +413,16 @@
         .custom-habit input {
             flex: 1;
             padding: 10px;
-            border: 1px solid #20b2aa40;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            background: #1a1a2e;
-            color: #ffffff;
+            background: #ffffff;
+            color: #1e293b;
         }
 
         .custom-habit input:focus {
             border-color: #20b2aa;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.1);
         }
 
         /* Индикатор сохранения */
@@ -425,7 +430,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 10px 16px;
             border-radius: 24px;
@@ -435,7 +440,7 @@
             transform: translateY(-10px);
             transition: all 0.4s ease;
             z-index: 1001;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
         }
 
         .save-indicator.show {
@@ -444,7 +449,8 @@
         }
 
         .save-indicator.error {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
         }
 
         /* Debug панель */
@@ -453,7 +459,7 @@
             bottom: 10px;
             left: 10px;
             right: 10px;
-            background: rgba(26, 26, 46, 0.95);
+            background: rgba(30, 41, 59, 0.95);
             color: #20b2aa;
             padding: 12px;
             border-radius: 12px;
@@ -462,7 +468,7 @@
             max-height: 140px;
             overflow-y: auto;
             z-index: 1002;
-            border: 1px solid #20b2aa40;
+            border: 1px solid #e2e8f0;
             backdrop-filter: blur(10px);
         }
 
@@ -472,7 +478,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #16213e;
+            background: #f1f5f9;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -683,6 +689,14 @@
         let isInitialized = false;
         let debugMode = false;
 
+        // Статистические кеши для принудительного обновления
+        let statisticsCache = {
+            totalCompleted: 0,
+            averageProgress: 0,
+            bestHabit: '📊',
+            currentStreak: 0
+        };
+
         // Инициализация Telegram WebApp
         if (window.Telegram?.WebApp) {
             tgApp = window.Telegram.WebApp;
@@ -790,6 +804,7 @@
             
             if (debugMode) {
                 debugLog(`Текущее состояние: ${habits.length} привычек, CloudStorage: ${!!tgApp?.CloudStorage}`);
+                debugLog(`Кеш статистики: ${JSON.stringify(statisticsCache)}`);
             }
         }
 
@@ -829,24 +844,23 @@
             
             let saveData = { ...data };
             
-            // Применяем сжатие для данных привычек
-            if (key === 'habit_progress' && data.habitData) {
-                saveData = {
-                    ...data,
-                    habitData: compressHabitData(data.habitData),
-                    habits: compressHabits(data.habits || habits),
-                    compressed: true,
-                    version: '8.0-perplexity'
-                };
+            // Сохраняем кеш статистики вместе с данными
+            if (key === 'habit_progress') {
+                saveData.statisticsCache = statisticsCache;
             }
             
-            if (key === 'user_settings' && data.habitData) {
+            if (key === 'user_settings') {
+                saveData.statisticsCache = statisticsCache;
+            }
+            
+            // Применяем сжатие для данных привычек
+            if (data.habitData) {
                 saveData = {
-                    ...data,
+                    ...saveData,
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '8.0-perplexity'
+                    version: '9.0-light-stats'
                 };
             }
             
@@ -860,7 +874,7 @@
             let saveSuccess = false;
             let method = '';
             
-            // 1. Пробуем CloudStorage (теперь с любым количеством привычек!)
+            // 1. Пробуем CloudStorage
             if (tgApp?.CloudStorage) {
                 try {
                     await new Promise((resolve, reject) => {
@@ -942,6 +956,12 @@
                     if (cloudData) {
                         const parsed = JSON.parse(cloudData);
                         
+                        // Восстанавливаем кеш статистики
+                        if (parsed.statisticsCache) {
+                            statisticsCache = parsed.statisticsCache;
+                            debugLog(`📊 Восстановлен кеш статистики: ${JSON.stringify(statisticsCache)}`);
+                        }
+                        
                         // Проверяем, сжатые ли это данные
                         if (parsed.compressed && parsed.habitData) {
                             debugLog(`🗜️ Найдены сжатые данные, распаковываем...`);
@@ -964,6 +984,12 @@
                 const localData = localStorage.getItem(`proryv_${key}`);
                 if (localData) {
                     const parsed = JSON.parse(localData);
+                    
+                    // Восстанавливаем кеш статистики
+                    if (parsed.statisticsCache) {
+                        statisticsCache = parsed.statisticsCache;
+                        debugLog(`📊 Восстановлен кеш статистики из localStorage`);
+                    }
                     
                     // Проверяем, сжатые ли это данные
                     if (parsed.compressed && parsed.habitData) {
@@ -1004,11 +1030,15 @@
             
             debugLog(`📊 Обновлено ${checkedCount} галочек для ${habits.length} привычек`);
 
+            // Принудительно пересчитываем статистику перед сохранением
+            calculateStatistics();
+
             const progressData = {
                 habitData: habitData,
                 lastSaved: new Date().toISOString(),
                 habits: habits,
-                checksum: checkedCount
+                checksum: checkedCount,
+                statisticsCache: statisticsCache
             };
             
             const settingsData = {
@@ -1016,10 +1046,11 @@
                 habitData: habitData,
                 month: 'september',
                 year: 2025,
-                checksum: checkedCount
+                checksum: checkedCount,
+                statisticsCache: statisticsCache
             };
             
-            debugLog(`💾 Сохраняем: ${checkedCount} галочек, ${habits.length} привычек`);
+            debugLog(`💾 Сохраняем: ${checkedCount} галочек, ${habits.length} привычек, статистика: ${JSON.stringify(statisticsCache)}`);
             
             // Сохраняем параллельно
             const [progressResult, settingsResult] = await Promise.all([
@@ -1073,8 +1104,91 @@
             
             const hasData = habits.length > 0;
             debugLog(`📊 Итого: ${habits.length} привычек, данные есть: ${hasData}`);
+            debugLog(`📊 Кеш статистики после загрузки: ${JSON.stringify(statisticsCache)}`);
             
             return hasData;
+        }
+
+        // ==================== СТАТИСТИКА ====================
+
+        function calculateStatistics() {
+            debugLog('📊 Пересчитываем статистику...');
+            
+            // Считаем статистику
+            let totalCompleted = 0;
+            let totalPossible = 0;
+            const habitProgress = [];
+
+            habits.forEach((habit, habitIndex) => {
+                let completed = 0;
+                for (let day = 1; day <= daysInMonth; day++) {
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                        completed++;
+                        totalCompleted++;
+                    }
+                    totalPossible++;
+                }
+                const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
+                habitProgress.push(Math.min(progress, 100));
+            });
+
+            const averageProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
+            
+            // Находим лучшую привычку
+            const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
+            const bestHabit = habits[bestHabitIndex];
+
+            // Считаем текущую серию
+            let currentStreak = 0;
+            for (let day = daysInMonth; day >= 1; day--) {
+                let dayComplete = false;
+                habits.forEach((habit, habitIndex) => {
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                        dayComplete = true;
+                    }
+                });
+                if (dayComplete) {
+                    currentStreak++;
+                } else {
+                    break;
+                }
+            }
+
+            // Обновляем кеш статистики
+            statisticsCache = {
+                totalCompleted: totalCompleted,
+                averageProgress: averageProgress,
+                bestHabit: bestHabit ? bestHabit.icon : '📊',
+                currentStreak: currentStreak
+            };
+            
+            debugLog(`📊 Пересчитанная статистика: ${JSON.stringify(statisticsCache)}`);
+            return statisticsCache;
+        }
+
+        function updateStatisticsDisplay() {
+            debugLog('📊 Обновляем отображение статистики...');
+            
+            // Обновляем отображение статистики
+            const totalCompletedEl = document.getElementById('totalCompleted');
+            const averageProgressEl = document.getElementById('averageProgress');
+            const bestHabitEl = document.getElementById('bestHabit');
+            const currentStreakEl = document.getElementById('currentStreak');
+            
+            if (totalCompletedEl) {
+                totalCompletedEl.textContent = statisticsCache.totalCompleted;
+                debugLog(`📊 Показано заданий: ${statisticsCache.totalCompleted}`);
+            }
+            if (averageProgressEl) {
+                averageProgressEl.textContent = statisticsCache.averageProgress + '%';
+                debugLog(`📊 Показан прогресс: ${statisticsCache.averageProgress}%`);
+            }
+            if (bestHabitEl) {
+                bestHabitEl.textContent = statisticsCache.bestHabit;
+            }
+            if (currentStreakEl) {
+                currentStreakEl.textContent = statisticsCache.currentStreak;
+            }
         }
 
         // ==================== АНАЛИЗ ОТ ИИ ====================
@@ -1232,11 +1346,13 @@
                 restoreCheckboxes();
                 // ВАЖНО: обновляем статистику после восстановления
                 setTimeout(() => {
+                    calculateStatistics();
+                    updateStatisticsDisplay();
                     updateProgress();
                     isInitialized = true;
                     debugLog('✅ Инициализация завершена');
-                }, 200);
-            }, 300);
+                }, 300);
+            }, 500);
         }
 
         function initializeHabits() {
@@ -1344,7 +1460,11 @@
             createHabitsTable();
             setTimeout(async () => {
                 restoreCheckboxes();
-                setTimeout(() => updateProgress(), 100);
+                setTimeout(() => {
+                    calculateStatistics();
+                    updateStatisticsDisplay();
+                    updateProgress();
+                }, 200);
                 await forceSaveProgress();
             }, 100);
         }
@@ -1396,10 +1516,10 @@
                     data: {
                         labels: ['Выполнено', 'Осталось'],
                         datasets: [{
-                            data: [0, 100],
-                            backgroundColor: ['#20b2aa', '#16213e'],
-                            borderWidth: 2,
-                            borderColor: '#0f0f23',
+                            data: [statisticsCache.averageProgress || 0, 100 - (statisticsCache.averageProgress || 0)],
+                            backgroundColor: ['#20b2aa', '#e2e8f0'],
+                            borderWidth: 3,
+                            borderColor: '#ffffff',
                             cutout: '75%'
                         }]
                     },
@@ -1413,7 +1533,7 @@
                                     padding: 20,
                                     usePointStyle: true,
                                     font: { size: 12 },
-                                    color: '#ffffff'
+                                    color: '#1e293b'
                                 }
                             }
                         }
@@ -1451,16 +1571,16 @@
                                 ticks: {
                                     callback: function(value) { return value + '%'; },
                                     font: { size: 10 },
-                                    color: '#a0a0a0'
+                                    color: '#64748b'
                                 },
                                 grid: {
-                                    color: '#16213e'
+                                    color: '#e2e8f0'
                                 }
                             },
                             x: { 
                                 ticks: { 
                                     font: { size: 14 },
-                                    color: '#ffffff'
+                                    color: '#1e293b'
                                 },
                                 grid: {
                                     display: false
@@ -1511,80 +1631,35 @@
                 forceSaveProgress();
             }, 2000);
 
-            // Считаем статистику
-            let totalCompleted = 0;
-            let totalPossible = 0;
-            const habitProgress = [];
-
-            habits.forEach((habit, habitIndex) => {
-                let completed = 0;
-                for (let day = 1; day <= daysInMonth; day++) {
-                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                        completed++;
-                        totalCompleted++;
-                    }
-                    totalPossible++;
-                }
-                const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
-                habitProgress.push(Math.min(progress, 100));
-            });
-
-            const averageProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
-            
-            // Находим лучшую привычку
-            const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
-            const bestHabit = habits[bestHabitIndex];
-
-            // Считаем текущую серию
-            let currentStreak = 0;
-            for (let day = daysInMonth; day >= 1; day--) {
-                let dayComplete = false;
-                habits.forEach((habit, habitIndex) => {
-                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                        dayComplete = true;
-                    }
-                });
-                if (dayComplete) {
-                    currentStreak++;
-                } else {
-                    break;
-                }
-            }
-
-            // Обновляем отображение статистики
-            const totalCompletedEl = document.getElementById('totalCompleted');
-            const averageProgressEl = document.getElementById('averageProgress');
-            const bestHabitEl = document.getElementById('bestHabit');
-            const currentStreakEl = document.getElementById('currentStreak');
-            
-            if (totalCompletedEl) {
-                totalCompletedEl.textContent = totalCompleted;
-                debugLog(`📊 Статистика обновлена: ${totalCompleted} заданий`);
-            }
-            if (averageProgressEl) {
-                averageProgressEl.textContent = averageProgress + '%';
-                debugLog(`📊 Средний прогресс: ${averageProgress}%`);
-            }
-            if (bestHabitEl) {
-                bestHabitEl.textContent = bestHabit ? bestHabit.icon : '📊';
-            }
-            if (currentStreakEl) {
-                currentStreakEl.textContent = currentStreak;
-            }
+            // Пересчитываем статистику
+            const stats = calculateStatistics();
+            updateStatisticsDisplay();
 
             // Обновляем диаграммы
             if (progressChart) {
                 try {
-                    progressChart.data.datasets[0].data = [averageProgress, 100 - averageProgress];
+                    progressChart.data.datasets[0].data = [stats.averageProgress, 100 - stats.averageProgress];
                     progressChart.update();
-                    debugLog(`📊 Круговая диаграмма обновлена: ${averageProgress}%`);
+                    debugLog(`📊 Круговая диаграмма обновлена: ${stats.averageProgress}%`);
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления круговой диаграммы: ${error}`);
                 }
             }
 
-            if (habitsChart && habitProgress.length > 0) {
+            if (habitsChart) {
                 try {
+                    const habitProgress = [];
+                    habits.forEach((habit, habitIndex) => {
+                        let completed = 0;
+                        for (let day = 1; day <= daysInMonth; day++) {
+                            if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                                completed++;
+                            }
+                        }
+                        const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
+                        habitProgress.push(Math.min(progress, 100));
+                    });
+                    
                     habitsChart.data.datasets[0].data = habitProgress;
                     habitsChart.update();
                     debugLog(`📊 Гистограмма обновлена для ${habitProgress.length} привычек`);
@@ -1614,10 +1689,18 @@
                 if (restoredCount > 0) {
                     showSaveIndicator(true, `✅ Восстановлено ${restoredCount} галочек`);
                     
-                    // ВАЖНО: принудительно обновляем статистику после восстановления
+                    // ВАЖНО: пересчитываем и отображаем статистику
                     setTimeout(() => {
-                        debugLog('🔄 Принудительное обновление статистики после восстановления');
-                        updateProgress();
+                        debugLog('🔄 Принудительный пересчет статистики после восстановления галочек');
+                        calculateStatistics();
+                        updateStatisticsDisplay();
+                        
+                        // Обновляем диаграммы с кешированными данными
+                        if (progressChart && statisticsCache.averageProgress) {
+                            progressChart.data.datasets[0].data = [statisticsCache.averageProgress, 100 - statisticsCache.averageProgress];
+                            progressChart.update();
+                            debugLog(`📊 Диаграмма восстановлена: ${statisticsCache.averageProgress}%`);
+                        }
                     }, 100);
                 } else {
                     debugLog(`ℹ️ Галочки не найдены для восстановления`);
@@ -1662,19 +1745,25 @@
             
             if (hasData) {
                 debugLog(`✅ Найдены сохраненные данные: ${habits.length} привычек`);
+                debugLog(`📊 Загруженная статистика: ${JSON.stringify(statisticsCache)}`);
                 
                 initializeHabits();
                 createHabitsTable();
                 
+                // Сначала отображаем загруженную статистику
+                updateStatisticsDisplay();
+                
                 setTimeout(() => {
                     initializeCharts();
                     restoreCheckboxes();
-                    // ВАЖНО: даем время на восстановление галочек перед обновлением статистики
+                    // Даем время на восстановление галочек, затем финализируем
                     setTimeout(() => {
+                        calculateStatistics();
+                        updateStatisticsDisplay();
                         updateProgress();
                         isInitialized = true;
                         debugLog('✅ Приложение полностью инициализировано со статистикой');
-                    }, 400);
+                    }, 500);
                 }, 500);
                 
             } else {
