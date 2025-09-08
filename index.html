@@ -437,10 +437,10 @@
             border-radius: 8px;
             font-size: 10px;
             font-family: monospace;
-            max-height: 100px;
+            max-height: 120px;
             overflow-y: auto;
             z-index: 1002;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         @media (max-width: 480px) {
@@ -656,6 +656,78 @@
             debugLog('Telegram WebApp НЕ найден - работаем в браузере');
         }
 
+        // ==================== ФУНКЦИИ СЖАТИЯ ДАННЫХ ====================
+
+        // Сжимаем habitData в компактный битовый формат
+        function compressHabitData(habitData) {
+            debugLog('🗜️ Начинаем сжатие habitData...');
+            const compressed = [];
+            
+            Object.keys(habitData).forEach(habitIndex => {
+                const days = habitData[habitIndex];
+                let bitString = '';
+                
+                // Конвертируем 30 булевых значений в битовую строку
+                for (let day = 1; day <= 30; day++) {
+                    bitString += days[day] ? '1' : '0';
+                }
+                
+                // Конвертируем битовую строку в число
+                const compressed30Days = parseInt(bitString, 2);
+                compressed[habitIndex] = compressed30Days;
+                
+                debugLog(`Привычка ${habitIndex}: ${bitString} → ${compressed30Days}`);
+            });
+            
+            const originalSize = JSON.stringify(habitData).length;
+            const compressedSize = JSON.stringify(compressed).length;
+            debugLog(`🗜️ Сжатие: ${originalSize} → ${compressedSize} байт (сжатие в ${Math.round(originalSize/compressedSize)}x)`);
+            
+            return compressed;
+        }
+
+        // Распаковываем данные обратно
+        function decompressHabitData(compressed) {
+            debugLog('📤 Начинаем распаковку habitData...');
+            const habitData = {};
+            
+            compressed.forEach((compressedDays, habitIndex) => {
+                if (compressedDays === undefined || compressedDays === null) return;
+                
+                // Конвертируем число обратно в битовую строку (30 бит)
+                const bitString = compressedDays.toString(2).padStart(30, '0');
+                
+                habitData[habitIndex] = {};
+                for (let day = 1; day <= 30; day++) {
+                    habitData[habitIndex][day] = bitString[day - 1] === '1';
+                }
+                
+                debugLog(`Привычка ${habitIndex}: ${compressedDays} → ${bitString}`);
+            });
+            
+            debugLog(`📤 Распаковано данных для ${Object.keys(habitData).length} привычек`);
+            return habitData;
+        }
+
+        // Сжимаем только названия привычек (убираем лишние поля)
+        function compressHabits(habits) {
+            return habits.map(habit => ({
+                n: habit.name.substring(0, 50), // Ограничиваем длину
+                g: habit.goal,
+                i: habit.icon
+            }));
+        }
+
+        // Распаковываем названия привычек
+        function decompressHabits(compressed) {
+            if (!compressed) return [];
+            return compressed.map(h => ({
+                name: h.n || h.name || '📝 Привычка',
+                goal: h.g || h.goal || 20,
+                icon: h.i || h.icon || '📝'
+            }));
+        }
+
         // ==================== DEBUG ФУНКЦИИ ====================
 
         function debugLog(message) {
@@ -664,8 +736,11 @@
                 const panel = document.getElementById('debugPanel');
                 const time = new Date().toLocaleTimeString();
                 panel.innerHTML = `[${time}] ${message}<br>` + panel.innerHTML;
-                if (panel.children.length > 10) {
-                    panel.removeChild(panel.lastChild);
+                
+                // Ограничиваем количество строк
+                const lines = panel.innerHTML.split('<br>');
+                if (lines.length > 15) {
+                    panel.innerHTML = lines.slice(0, 15).join('<br>');
                 }
             }
         }
@@ -675,6 +750,10 @@
             const panel = document.getElementById('debugPanel');
             panel.style.display = debugMode ? 'block' : 'none';
             debugLog('Debug режим: ' + (debugMode ? 'ВКЛ' : 'ВЫКЛ'));
+            
+            if (debugMode) {
+                debugLog(`Текущее состояние: ${habits.length} привычек, CloudStorage: ${!!tgApp?.CloudStorage}`);
+            }
         }
 
         // Библиотека готовых привычек
@@ -709,21 +788,42 @@
         }
 
         async function saveDataReliably(key, data) {
-            debugLog(`Начинаем сохранение: ${key}`);
-            const dataStr = JSON.stringify(data);
-            const dataSize = new Blob([dataStr]).size;
+            debugLog(`💾 Начинаем сохранение: ${key}`);
             
-            debugLog(`Размер данных: ${dataSize} байт`);
+            let saveData = { ...data };
             
-            if (dataSize > 100000) { // 100KB лимит
-                debugLog('❌ Данные слишком большие для CloudStorage');
-                return saveToLocalStorage(key, data);
+            // Применяем сжатие для данных привычек
+            if (key === 'habit_progress' && data.habitData) {
+                saveData = {
+                    ...data,
+                    habitData: compressHabitData(data.habitData),
+                    habits: compressHabits(data.habits || habits),
+                    compressed: true,
+                    version: '7.0-compressed'
+                };
             }
+            
+            if (key === 'user_settings' && data.habitData) {
+                saveData = {
+                    ...data,
+                    habitData: compressHabitData(data.habitData),
+                    habits: compressHabits(data.habits || habits),
+                    compressed: true,
+                    version: '7.0-compressed'
+                };
+            }
+            
+            const dataStr = JSON.stringify(saveData);
+            const originalStr = JSON.stringify(data);
+            const dataSize = new Blob([dataStr]).size;
+            const originalSize = new Blob([originalStr]).size;
+            
+            debugLog(`📏 Размер: ${originalSize} → ${dataSize} байт (сжато в ${Math.round(originalSize/dataSize)}x)`);
             
             let saveSuccess = false;
             let method = '';
             
-            // 1. Пробуем CloudStorage
+            // 1. Пробуем CloudStorage (теперь с любым количеством привычек!)
             if (tgApp?.CloudStorage) {
                 try {
                     await new Promise((resolve, reject) => {
@@ -732,13 +832,13 @@
                                 debugLog(`❌ CloudStorage ошибка: ${error}`);
                                 reject(error);
                             } else {
-                                debugLog(`✅ Сохранено в CloudStorage: ${key}`);
+                                debugLog(`✅ Сохранено в CloudStorage: ${key} (${dataSize} байт)`);
                                 resolve();
                             }
                         });
                         
                         // Таймаут на случай зависания
-                        setTimeout(() => reject('Timeout'), 5000);
+                        setTimeout(() => reject('Timeout'), 10000);
                     });
                     
                     // Проверяем, что данные действительно сохранились
@@ -748,7 +848,7 @@
                                 debugLog(`❌ Проверка CloudStorage неудачна: ${error}`);
                                 reject('Verification failed');
                             } else {
-                                debugLog(`✅ CloudStorage проверка прошла`);
+                                debugLog(`✅ CloudStorage проверка прошла для ${key}`);
                                 saveSuccess = true;
                                 method = 'CloudStorage';
                                 resolve();
@@ -772,11 +872,11 @@
                 }
             }
             
-            return { success: saveSuccess, method: method };
+            return { success: saveSuccess, method: method, size: dataSize };
         }
 
         async function loadDataReliably(key) {
-            debugLog(`Начинаем загрузку: ${key}`);
+            debugLog(`📂 Начинаем загрузку: ${key}`);
             
             // 1. Пробуем CloudStorage
             if (tgApp?.CloudStorage) {
@@ -790,7 +890,7 @@
                                 debugLog(`ℹ️ CloudStorage: данные не найдены для ${key}`);
                                 resolve(null);
                             } else {
-                                debugLog(`✅ Данные найдены в CloudStorage: ${key}`);
+                                debugLog(`✅ Данные найдены в CloudStorage: ${key} (${data.length} символов)`);
                                 resolve(data);
                             }
                         });
@@ -799,12 +899,22 @@
                         setTimeout(() => {
                             debugLog(`⏰ CloudStorage таймаут для ${key}`);
                             resolve(null);
-                        }, 3000);
+                        }, 5000);
                     });
                     
                     if (cloudData) {
                         const parsed = JSON.parse(cloudData);
-                        debugLog(`✅ CloudStorage данные загружены и распарсены: ${key}`);
+                        
+                        // Проверяем, сжатые ли это данные
+                        if (parsed.compressed && parsed.habitData) {
+                            debugLog(`🗜️ Найдены сжатые данные, распаковываем...`);
+                            parsed.habitData = decompressHabitData(parsed.habitData);
+                            if (parsed.habits) {
+                                parsed.habits = decompressHabits(parsed.habits);
+                            }
+                            debugLog(`✅ Данные распакованы для ${key}`);
+                        }
+                        
                         return { data: parsed, source: 'CloudStorage' };
                     }
                 } catch (error) {
@@ -817,6 +927,16 @@
                 const localData = localStorage.getItem(`proryv_${key}`);
                 if (localData) {
                     const parsed = JSON.parse(localData);
+                    
+                    // Проверяем, сжатые ли это данные
+                    if (parsed.compressed && parsed.habitData) {
+                        debugLog(`🗜️ Найдены сжатые данные в localStorage, распаковываем...`);
+                        parsed.habitData = decompressHabitData(parsed.habitData);
+                        if (parsed.habits) {
+                            parsed.habits = decompressHabits(parsed.habits);
+                        }
+                    }
+                    
                     debugLog(`✅ localStorage данные загружены: ${key}`);
                     return { data: parsed, source: 'localStorage' };
                 } else {
@@ -845,14 +965,13 @@
                 }
             });
             
-            debugLog(`Обновлено ${checkedCount} галочек`);
+            debugLog(`📊 Обновлено ${checkedCount} галочек для ${habits.length} привычек`);
 
             const progressData = {
                 habitData: habitData,
                 lastSaved: new Date().toISOString(),
                 habits: habits,
-                version: '6.0-debug',
-                checksum: checkedCount // Для проверки целостности
+                checksum: checkedCount
             };
             
             const settingsData = {
@@ -860,11 +979,10 @@
                 habitData: habitData,
                 month: 'september',
                 year: 2025,
-                version: '6.0-debug',
                 checksum: checkedCount
             };
             
-            debugLog(`Данные для сохранения: ${checkedCount} галочек, ${habits.length} привычек`);
+            debugLog(`💾 Сохраняем: ${checkedCount} галочек, ${habits.length} привычек`);
             
             // Сохраняем параллельно
             const [progressResult, settingsResult] = await Promise.all([
@@ -873,8 +991,8 @@
             ]);
             
             if (progressResult.success && settingsResult.success) {
-                showSaveIndicator(true, `✅ Сохранено (${progressResult.method})`);
-                debugLog(`✅ ВСЕ СОХРАНЕНО! Метод: ${progressResult.method}`);
+                showSaveIndicator(true, `✅ Сохранено (${progressResult.method}, ${progressResult.size}б)`);
+                debugLog(`✅ ВСЕ СОХРАНЕНО! Метод: ${progressResult.method}, размер: ${progressResult.size} байт`);
             } else {
                 showSaveIndicator(false, '❌ Ошибка сохранения');
                 debugLog(`❌ ОШИБКА СОХРАНЕНИЯ!`);
@@ -889,34 +1007,35 @@
                 loadDataReliably('habit_progress')
             ]);
             
-            debugLog(`Настройки: ${settingsResult.source || 'НЕ НАЙДЕНЫ'}`);
-            debugLog(`Прогресс: ${progressResult.source || 'НЕ НАЙДЕНЫ'}`);
+            debugLog(`📂 Настройки: ${settingsResult.source || 'НЕ НАЙДЕНЫ'}`);
+            debugLog(`📂 Прогресс: ${progressResult.source || 'НЕ НАЙДЕНЫ'}`);
             
             if (settingsResult.data) {
                 habits = settingsResult.data.habits || [];
                 if (settingsResult.data.habitData) {
                     habitData = settingsResult.data.habitData;
                 }
-                debugLog(`Загружено ${habits.length} привычек из настроек`);
+                debugLog(`📋 Загружено ${habits.length} привычек из настроек`);
             }
             
             if (progressResult.data) {
                 if (progressResult.data.habitData) {
                     // Объединяем данные прогресса
                     Object.keys(progressResult.data.habitData).forEach(habitIndex => {
-                        if (habitData[habitIndex]) {
-                            habitData[habitIndex] = {
-                                ...habitData[habitIndex], 
-                                ...progressResult.data.habitData[habitIndex]
-                            };
+                        if (!habitData[habitIndex]) {
+                            habitData[habitIndex] = {};
                         }
+                        habitData[habitIndex] = {
+                            ...habitData[habitIndex], 
+                            ...progressResult.data.habitData[habitIndex]
+                        };
                     });
                 }
-                debugLog(`Объединены данные прогресса (checksum: ${progressResult.data.checksum || 'N/A'})`);
+                debugLog(`📈 Объединены данные прогресса (checksum: ${progressResult.data.checksum || 'N/A'})`);
             }
             
             const hasData = habits.length > 0;
-            debugLog(`Итого загружено: ${habits.length} привычек, есть данные: ${hasData}`);
+            debugLog(`📊 Итого: ${habits.length} привычек, данные есть: ${hasData}`);
             
             return hasData;
         }
@@ -943,7 +1062,7 @@
                 analysis_request: 'Проанализируй мой прогресс и дай рекомендации'
             };
 
-            debugLog(`Отправляем в n8n анализ для ${habits.length} привычек`);
+            debugLog(`🤖 Отправляем в n8n анализ для ${habits.length} привычек`);
 
             showSaveIndicator(true, '🤖 Запрос к ИИ...');
 
@@ -957,7 +1076,7 @@
                     body: JSON.stringify(analysisData)
                 });
 
-                debugLog(`ИИ анализ статус: ${response.status}`);
+                debugLog(`🤖 ИИ анализ статус: ${response.status}`);
                 
                 if (response.ok) {
                     showSaveIndicator(true, '✅ Анализ отправлен ИИ');
@@ -968,7 +1087,7 @@
                     showSaveIndicator(false, '❌ Ошибка запроса к ИИ');
                 }
             } catch (error) {
-                debugLog(`ИИ анализ ошибка: ${error}`);
+                debugLog(`🤖 ИИ анализ ошибка: ${error}`);
                 showSaveIndicator(false, '❌ Ошибка связи с ИИ');
             }
         }
@@ -976,14 +1095,14 @@
         // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
         function showSetupWizard() {
-            debugLog('Показываем мастер настройки');
+            debugLog('⚙️ Показываем мастер настройки');
             document.getElementById('setupWizard').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
             populateHabitLibrary();
         }
 
         function goBack() {
-            debugLog('Закрываем мастер настройки');
+            debugLog('⬅️ Закрываем мастер настройки');
             document.getElementById('setupWizard').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
         }
@@ -1008,11 +1127,11 @@
 
         function toggleHabitSelection(index, element) {
             element.classList.toggle('selected');
-            debugLog(`Привычка ${index} переключена`);
+            debugLog(`🔄 Привычка ${index} переключена`);
         }
 
         function addCustomHabit() {
-            debugLog('Добавляем кастомную привычку');
+            debugLog('➕ Добавляем кастомную привычку');
             const container = document.getElementById('customHabits');
             const div = document.createElement('div');
             div.className = 'custom-habit';
@@ -1027,7 +1146,7 @@
         }
 
         async function finishSetup() {
-            debugLog('Завершаем настройку...');
+            debugLog('⚙️ Завершаем настройку...');
             habits = [];
             
             // Добавляем выбранные готовые привычки
@@ -1063,7 +1182,7 @@
                 ];
             }
             
-            debugLog(`Выбрано привычек: ${habits.length}`);
+            debugLog(`📋 Выбрано привычек: ${habits.length}`);
             
             await forceSaveProgress();
             goBack();
@@ -1076,12 +1195,12 @@
                 restoreCheckboxes();
                 updateProgress();
                 isInitialized = true;
-                debugLog('Инициализация завершена');
+                debugLog('✅ Инициализация завершена');
             }, 300);
         }
 
         function initializeHabits() {
-            debugLog('Инициализируем данные привычек');
+            debugLog('🔧 Инициализируем данные привычек');
             
             habits.forEach((habit, habitIndex) => {
                 if (!habitData[habitIndex]) {
@@ -1095,11 +1214,11 @@
                 }
             });
             
-            debugLog(`Инициализированы данные для ${habits.length} привычек`);
+            debugLog(`🔧 Инициализированы данные для ${habits.length} привычек`);
         }
 
         function createHabitsTable() {
-            debugLog('Создаем таблицу привычек');
+            debugLog('📋 Создаем таблицу привычек');
             const tbody = document.getElementById('habitsTable');
             tbody.innerHTML = '';
 
@@ -1145,7 +1264,7 @@
                 tbody.appendChild(row);
             });
             
-            debugLog(`Таблица создана для ${habits.length} привычек`);
+            debugLog(`📋 Таблица создана для ${habits.length} привычек`);
         }
 
         function updateHabitName(index, name) {
@@ -1191,7 +1310,7 @@
         }
 
         async function addNewHabit() {
-            debugLog('Добавляем новую привычку');
+            debugLog('➕ Добавляем новую привычку');
             const newHabit = {
                 name: "📝 Новая привычка",
                 goal: 20,
@@ -1218,7 +1337,7 @@
         }
 
         function initializeCharts() {
-            debugLog('Инициализируем диаграммы...');
+            debugLog('📊 Инициализируем диаграммы...');
             
             if (typeof Chart === 'undefined') {
                 debugLog('❌ Chart.js не загружен');
@@ -1309,8 +1428,6 @@
                 return;
             }
             
-            debugLog('Обновляем прогресс...');
-            
             // Обновляем данные из чекбоксов
             let checkedCount = 0;
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
@@ -1325,7 +1442,7 @@
                 }
             });
             
-            debugLog(`Найдено отмеченных чекбоксов: ${checkedCount}`);
+            debugLog(`📊 Обновлен прогресс: ${checkedCount} галочек`);
 
             // Автосохранение через 2 секунды после изменений
             if (window.autoSaveTimeout) {
@@ -1354,8 +1471,6 @@
             });
 
             const averageProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
-            
-            debugLog(`Статистика: ${totalCompleted}/${totalPossible} (${averageProgress}%)`);
             
             // Находим лучшую привычку
             const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
@@ -1393,7 +1508,6 @@
                 try {
                     progressChart.data.datasets[0].data = [averageProgress, 100 - averageProgress];
                     progressChart.update();
-                    debugLog('✅ Круговая диаграмма обновлена');
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления круговой диаграммы: ${error}`);
                 }
@@ -1403,7 +1517,6 @@
                 try {
                     habitsChart.data.datasets[0].data = habitProgress;
                     habitsChart.update();
-                    debugLog('✅ Гистограмма обновлена');
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления гистограммы: ${error}`);
                 }
@@ -1411,7 +1524,7 @@
         }
 
         function restoreCheckboxes() {
-            debugLog('Восстанавливаем галочки...');
+            debugLog('🔄 Восстанавливаем галочки...');
             let restoredCount = 0;
             
             setTimeout(() => {
@@ -1492,10 +1605,10 @@
 
         // Запуск приложения
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('DOM загружен');
+            debugLog('🚀 DOM загружен');
             
             setTimeout(() => {
-                debugLog('Запускаем инициализацию приложения');
+                debugLog('🚀 Запускаем инициализацию приложения');
                 initializeApp();
             }, 500);
         });
