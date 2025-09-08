@@ -43,33 +43,38 @@
             position: relative;
         }
 
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
         .header-logo {
-            display: inline-block;
             width: 40px;
             height: 40px;
-            margin-right: 10px;
-            vertical-align: middle;
+            margin-right: 12px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
-        }
-
-        .header-logo svg {
-            width: 24px;
-            height: 24px;
-            fill: #ffffff;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xNCAySDEwdjEwaDR2LTJ6bTYgMGgtNHYxMGg0di0yem0tMTIgMEgydjEwaDR2LTJ6bTEyIDEySDJ2Mmg4djJoNHYtMmg4di0yeiIvPgo8cGF0aCBmaWxsPSIjMjBiMmFhIiBkPSJNOS4yIDEyLjhjMS4yIDIuNCAxLjggNCAyIDZoMmMtLjItMi0uOC0zLjYtMi02eiIvPgo8L3N2Zz4=');
+            background-size: 24px 24px;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .header h1 {
             font-size: 24px;
-            margin-bottom: 8px;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: inline-block;
-            vertical-align: middle;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
         }
 
         .month-selector {
@@ -78,7 +83,6 @@
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
-            margin-top: 8px;
             backdrop-filter: blur(10px);
         }
 
@@ -173,6 +177,7 @@
         .tracker-section {
             overflow-x: auto;
             margin-bottom: 20px;
+            position: relative;
         }
 
         .tracker-table {
@@ -181,7 +186,7 @@
             background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
-            font-size: 12px;
+            font-size: 13px;
             box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
             border: 1px solid #e2e8f0;
         }
@@ -189,21 +194,43 @@
         .tracker-table th {
             background: #f8fafc;
             color: #1e293b;
-            padding: 12px 6px;
+            padding: 14px 8px;
             font-weight: 600;
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tracker-table th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            min-width: 140px;
         }
 
         .tracker-table td {
-            padding: 8px 6px;
+            padding: 10px 8px;
             text-align: center;
             border-bottom: 1px solid #f1f5f9;
             background: #ffffff;
         }
 
+        .tracker-table td:first-child {
+            position: sticky;
+            left: 0;
+            background: #ffffff;
+            z-index: 9;
+            border-right: 1px solid #e2e8f0;
+        }
+
         .habit-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .habit-row:hover td:first-child {
             background-color: #f8fafc;
         }
 
@@ -211,8 +238,8 @@
             text-align: left !important;
             font-weight: 500;
             padding-left: 12px !important;
-            min-width: 120px;
-            font-size: 11px;
+            min-width: 140px;
+            font-size: 12px;
             position: relative;
             color: #1e293b;
         }
@@ -221,7 +248,7 @@
             background: transparent;
             border: none;
             color: #1e293b;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
             width: 100%;
             outline: none;
@@ -237,7 +264,7 @@
             background: transparent;
             border: none;
             color: #20b2aa;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             width: 30px;
             text-align: center;
@@ -252,12 +279,12 @@
         .fact-cell {
             font-weight: bold;
             color: #20b2aa;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .day-checkbox {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
             accent-color: #20b2aa;
         }
@@ -368,17 +395,6 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
-            color: #ffffff;
-            border: 1px solid transparent;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(32, 178, 170, 0.4);
-        }
-
         .btn-secondary {
             background: #f8fafc;
             color: #475569;
@@ -390,28 +406,6 @@
             border-color: #20b2aa;
             color: #20b2aa;
             transform: translateY(-1px);
-        }
-
-        .btn-add {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: #ffffff;
-            border: 1px solid transparent;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-save {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: #ffffff;
-            border: 1px solid transparent;
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
         }
 
         .btn-ai {
@@ -507,8 +501,14 @@
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #20b2aa10 0%, #1e90ff10 100%);
+            background: linear-gradient(135deg, #20b2aa20 0%, #1e90ff20 100%);
             border-color: #20b2aa;
+        }
+
+        .habit-option.existing {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
         }
 
         .goal-slider {
@@ -543,6 +543,51 @@
             box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.1);
         }
 
+        .emoji-picker {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #ffffff;
+            cursor: pointer;
+            font-size: 20px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .emoji-picker:hover {
+            border-color: #20b2aa;
+        }
+
+        .emoji-list {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            z-index: 1001;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            max-width: 240px;
+        }
+
+        .emoji-list.show {
+            display: grid;
+        }
+
+        .emoji-option {
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .emoji-option:hover {
+            background: #f1f5f9;
+        }
+
         /* Индикатор сохранения */
         .save-indicator {
             position: fixed;
@@ -569,25 +614,6 @@
         .save-indicator.error {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-        }
-
-        /* Debug панель */
-        .debug-panel {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            background: rgba(30, 41, 59, 0.95);
-            color: #20b2aa;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-family: 'Courier New', monospace;
-            max-height: 140px;
-            overflow-y: auto;
-            z-index: 1002;
-            border: 1px solid #e2e8f0;
-            backdrop-filter: blur(10px);
         }
 
         /* Scrollbar styling */
@@ -625,22 +651,22 @@
             }
             
             .tracker-table {
-                font-size: 11px;
+                font-size: 12px;
             }
             
             .tracker-table th,
             .tracker-table td {
-                padding: 6px 3px;
+                padding: 8px 4px;
             }
 
             .day-checkbox {
-                width: 14px;
-                height: 14px;
+                width: 16px;
+                height: 16px;
             }
 
             .habit-name {
-                min-width: 100px;
-                font-size: 10px;
+                min-width: 120px;
+                font-size: 11px;
             }
 
             .controls {
@@ -668,13 +694,13 @@
             }
             
             .habit-name {
-                min-width: 80px;
-                font-size: 9px;
+                min-width: 100px;
+                font-size: 10px;
             }
 
             .day-checkbox {
-                width: 12px;
-                height: 12px;
+                width: 14px;
+                height: 14px;
             }
         }
     </style>
@@ -682,9 +708,6 @@
 <body>
     <!-- Индикатор сохранения -->
     <div id="saveIndicator" class="save-indicator">✅ Прогресс сохранен</div>
-
-    <!-- Debug панель -->
-    <div id="debugPanel" class="debug-panel" style="display: none;"></div>
 
     <!-- Setup Wizard -->
     <div id="setupWizard" class="setup-wizard" style="display: none;">
@@ -705,15 +728,19 @@
             <h3>✏️ Свои привычки:</h3>
             <div id="customHabits">
                 <div class="custom-habit">
-                    <input type="text" placeholder="🎯 Моя привычка..." class="custom-habit-input">
+                    <div class="emoji-picker" onclick="showEmojiPicker(this)">📝</div>
+                    <input type="text" placeholder="Название привычки..." class="custom-habit-input">
                     <input type="number" value="20" min="1" max="31" class="goal-slider">
-                    <button class="btn btn-add" onclick="addCustomHabit()">+</button>
+                    <button class="btn btn-secondary" onclick="addCustomHabit()">+</button>
+                </div>
+                <div class="emoji-list" id="emojiList">
+                    <!-- Будет заполнено JS -->
                 </div>
             </div>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <button onclick="finishSetup()" class="btn btn-primary" style="padding: 12px 30px; font-size: 16px;">
+            <button onclick="finishSetup()" class="btn btn-secondary" style="padding: 12px 30px; font-size: 16px; background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%); color: white;">
                 ✅ Начать отслеживание
             </button>
         </div>
@@ -723,12 +750,11 @@
     <div class="container" id="mainApp">
         <!-- Header -->
         <div class="header">
-            <div class="header-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+            <div class="header-top">
+                <div class="header-logo"></div>
+                <h1>Прорыв</h1>
             </div>
-            <h1>Прорыв</h1>
+            <div class="welcome-text" id="welcomeText">Добро пожаловать, Пользователь</div>
             <div class="month-selector">Сентябрь 2025</div>
         </div>
 
@@ -800,12 +826,8 @@
 
             <!-- Controls -->
             <div class="controls">
-                <button class="btn btn-add" onclick="addNewHabit()">➕ Добавить</button>
                 <button class="btn btn-secondary" onclick="showSetupWizard()">⚙️ Настройки</button>
-                <button class="btn btn-save" onclick="forceSaveProgress()">💾 Сохранить</button>
                 <button class="btn btn-ai" onclick="requestAIAnalysis()">🤖 Анализ ИИ</button>
-                <button class="btn btn-primary" onclick="exportCSV()">📥 CSV</button>
-                <button class="btn btn-secondary" onclick="toggleDebug()">🐛 Debug</button>
             </div>
         </div>
     </div>
@@ -817,7 +839,7 @@
         let habitData = {};
         const daysInMonth = 30;
         let isInitialized = false;
-        let debugMode = false;
+        let currentEmojiPicker = null;
 
         // Статистические кеши для принудительного обновления
         let statisticsCache = {
@@ -832,15 +854,56 @@
             tgApp = window.Telegram.WebApp;
             tgApp.ready();
             tgApp.expand();
-            debugLog('Telegram WebApp инициализирован');
+            
+            // Получаем имя пользователя из Telegram
+            const userName = tgApp.initDataUnsafe?.user?.first_name || 'Пользователь';
+            document.getElementById('welcomeText').textContent = `Добро пожаловать, ${userName}`;
         } else {
-            debugLog('Telegram WebApp НЕ найден - работаем в браузере');
+            document.getElementById('welcomeText').textContent = 'Добро пожаловать, Пользователь';
         }
+
+        // Расширенная библиотека готовых привычек
+        const habitLibrary = [
+            { name: "🏃🏻 Утренняя пробежка", defaultGoal: 20 },
+            { name: "🧘🏻 Медитация", defaultGoal: 30 },
+            { name: "🏋🏻 Спортзал", defaultGoal: 15 },
+            { name: "💧 Пить 2л воды", defaultGoal: 30 },
+            { name: "🚶🏻 10000 шагов", defaultGoal: 25 },
+            { name: "📖 Чтение книг", defaultGoal: 20 },
+            { name: "🎧 Подкасты", defaultGoal: 15 },
+            { name: "✍🏻 Ведение дневника", defaultGoal: 25 },
+            { name: "🧠 Изучение языка", defaultGoal: 20 },
+            { name: "🏠 Уборка дома", defaultGoal: 10 },
+            { name: "🍳 Готовка дома", defaultGoal: 20 },
+            { name: "🛏 Заправлять кровать", defaultGoal: 30 },
+            { name: "⏰ Подъем в 6:00", defaultGoal: 25 },
+            { name: "📱 Цифровой детокс", defaultGoal: 20 },
+            { name: "🎯 Планирование дня", defaultGoal: 30 },
+            { name: "🤸🏻 Растяжка", defaultGoal: 25 },
+            { name: "💻 Изучение навыков", defaultGoal: 20 },
+            { name: "💆🏻 Массаж", defaultGoal: 10 },
+            { name: "🧊 Закаливание", defaultGoal: 15 },
+            { name: "🎨 Творчество", defaultGoal: 15 },
+            { name: "🌱 Забота о растениях", defaultGoal: 25 },
+            { name: "📝 Планирование", defaultGoal: 30 },
+            { name: "🎵 Музыка", defaultGoal: 20 },
+            { name: "🚫 Отказ от сладкого", defaultGoal: 25 },
+            { name: "☕ Меньше кофе", defaultGoal: 20 }
+        ];
+
+        // Эмодзи для выбора
+        const emojiOptions = [
+            '📝', '🏃🏻', '🧘🏻', '🏋🏻', '💧', '🚶🏻', '📖', '🎧', '✍🏻', '🧠',
+            '🏠', '🍳', '🛏', '⏰', '📱', '🎯', '🤸🏻', '💻', '💆🏻', '🧊',
+            '🎨', '🌱', '🎵', '🚫', '☕', '🍎', '🥗', '🍊', '🥛', '🧴',
+            '💊', '🚴🏻', '🏊🏻', '⚽', '🎾', '🏀', '🏓', '🎳', '🎯', '🎪',
+            '📚', '✏', '🖊', '📄', '💡', '🔬', '🌟', '❤️', '💚', '💙',
+            '🔥', '⚡', '🌈', '🎉', '🎁', '🏆', '🥇', '💎', '🌸', '🌺'
+        ];
 
         // ==================== ФУНКЦИИ СЖАТИЯ ДАННЫХ ====================
 
         function compressHabitData(habitData) {
-            debugLog('🗜️ Начинаем сжатие habitData...');
             const compressed = [];
             
             Object.keys(habitData).forEach(habitIndex => {
@@ -855,15 +918,10 @@
                 compressed[habitIndex] = compressed30Days;
             });
             
-            const originalSize = JSON.stringify(habitData).length;
-            const compressedSize = JSON.stringify(compressed).length;
-            debugLog(`🗜️ Сжатие: ${originalSize} → ${compressedSize} байт`);
-            
             return compressed;
         }
 
         function decompressHabitData(compressed) {
-            debugLog('📤 Начинаем распаковку habitData...');
             const habitData = {};
             
             compressed.forEach((compressedDays, habitIndex) => {
@@ -897,49 +955,7 @@
             }));
         }
 
-        // ==================== DEBUG ФУНКЦИИ ====================
-
-        function debugLog(message) {
-            console.log('[ПРОРЫВ]', message);
-            if (debugMode) {
-                const panel = document.getElementById('debugPanel');
-                const time = new Date().toLocaleTimeString();
-                panel.innerHTML = `[${time}] ${message}<br>` + panel.innerHTML;
-                
-                const lines = panel.innerHTML.split('<br>');
-                if (lines.length > 15) {
-                    panel.innerHTML = lines.slice(0, 15).join('<br>');
-                }
-            }
-        }
-
-        function toggleDebug() {
-            debugMode = !debugMode;
-            const panel = document.getElementById('debugPanel');
-            panel.style.display = debugMode ? 'block' : 'none';
-            debugLog('Debug режим: ' + (debugMode ? 'ВКЛ' : 'ВЫКЛ'));
-        }
-
-        // Библиотека готовых привычек с пастельными эмодзи
-        const habitLibrary = [
-            { name: "🏃🏻 Утренняя пробежка", defaultGoal: 20 },
-            { name: "🧘🏻 Медитация", defaultGoal: 30 },
-            { name: "🏋🏻 Спортзал", defaultGoal: 15 },
-            { name: "💧 Пить 2л воды", defaultGoal: 30 },
-            { name: "🚶🏻 10000 шагов", defaultGoal: 25 },
-            { name: "📖 Чтение книг", defaultGoal: 20 },
-            { name: "🎧 Подкасты", defaultGoal: 15 },
-            { name: "✍🏻 Ведение дневника", defaultGoal: 25 },
-            { name: "🧠 Изучение языка", defaultGoal: 20 },
-            { name: "🏠 Уборка дома", defaultGoal: 10 },
-            { name: "🍳 Готовка дома", defaultGoal: 20 },
-            { name: "🛏 Заправлять кровать", defaultGoal: 30 },
-            { name: "⏰ Подъем в 6:00", defaultGoal: 25 },
-            { name: "📱 Цифровой детокс", defaultGoal: 20 },
-            { name: "🎯 Планирование дня", defaultGoal: 30 }
-        ];
-
-        // ==================== НАДЕЖНЫЕ ФУНКЦИИ СОХРАНЕНИЯ/ЗАГРУЗКИ ====================
+        // ==================== ФУНКЦИИ СОХРАНЕНИЯ/ЗАГРУЗКИ ====================
 
         function showSaveIndicator(success = true, message = null) {
             const indicator = document.getElementById('saveIndicator');
@@ -952,8 +968,6 @@
         }
 
         async function saveDataReliably(key, data) {
-            debugLog(`💾 Начинаем сохранение: ${key}`);
-            
             let saveData = { ...data };
             saveData.statisticsCache = statisticsCache;
             
@@ -963,7 +977,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '11.0-improved-ui'
+                    version: '12.0-final-ui'
                 };
             }
             
@@ -998,7 +1012,7 @@
                         });
                     });
                 } catch (error) {
-                    debugLog(`❌ CloudStorage не сработал: ${error}`);
+                    console.log('CloudStorage failed:', error);
                 }
             }
             
@@ -1008,7 +1022,7 @@
                     saveSuccess = true;
                     method = 'localStorage';
                 } catch (error) {
-                    debugLog(`❌ localStorage ошибка: ${error}`);
+                    console.log('localStorage failed:', error);
                 }
             }
             
@@ -1016,8 +1030,6 @@
         }
 
         async function loadDataReliably(key) {
-            debugLog(`📂 Начинаем загрузку: ${key}`);
-            
             if (tgApp?.CloudStorage) {
                 try {
                     const cloudData = await new Promise((resolve, reject) => {
@@ -1050,7 +1062,7 @@
                         return { data: parsed, source: 'CloudStorage' };
                     }
                 } catch (error) {
-                    debugLog(`❌ CloudStorage ошибка: ${error}`);
+                    console.log('CloudStorage error:', error);
                 }
             }
             
@@ -1073,15 +1085,13 @@
                     return { data: parsed, source: 'localStorage' };
                 }
             } catch (error) {
-                debugLog(`❌ localStorage ошибка: ${error}`);
+                console.log('localStorage error:', error);
             }
             
             return { data: null, source: null };
         }
 
         async function forceSaveProgress() {
-            debugLog('=== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ===');
-            
             let checkedCount = 0;
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const habitIndex = parseInt(checkbox.dataset.habit);
@@ -1118,15 +1128,11 @@
             ]);
             
             if (progressResult.success && settingsResult.success) {
-                showSaveIndicator(true, `✅ Сохранено (${progressResult.size}б)`);
-            } else {
-                showSaveIndicator(false, '❌ Ошибка сохранения');
+                showSaveIndicator(true, `✅ Автосохранено (${progressResult.size}б)`);
             }
         }
 
         async function loadAllData() {
-            debugLog('=== ЗАГРУЗКА ВСЕХ ДАННЫХ ===');
-            
             const [settingsResult, progressResult] = await Promise.all([
                 loadDataReliably('user_settings'),
                 loadDataReliably('habit_progress')
@@ -1158,18 +1164,7 @@
 
         // ==================== СТАТИСТИКА ====================
 
-        function getCurrentDay() {
-            const currentDate = new Date();
-            const currentDay = (currentDate.getFullYear() === 2025 && currentDate.getMonth() === 8) 
-                ? currentDate.getDate() 
-                : 8;
-            
-            return Math.min(currentDay, daysInMonth);
-        }
-
         function calculateStatistics() {
-            debugLog('📊 Пересчитываем статистику...');
-            
             let totalCompleted = 0;
             let totalPossible = habits.length * 30;
             const habitProgress = [];
@@ -1203,14 +1198,10 @@
                 habitProgress: habitProgress
             };
             
-            debugLog(`📊 Статистика: ${totalCompleted} заданий, ${overallProgress}%`);
-            
             return statisticsCache;
         }
 
         function updateStatisticsDisplay() {
-            debugLog('📊 Обновляем отображение статистики...');
-            
             const totalCompletedEl = document.getElementById('totalCompleted');
             const bestHabitEl = document.getElementById('bestHabit');
             const overallProgressEl = document.getElementById('overallProgress');
@@ -1261,16 +1252,60 @@
             });
         }
 
+        // ==================== ЭМОДЗИ ПИКЕР ====================
+
+        function showEmojiPicker(pickerElement) {
+            currentEmojiPicker = pickerElement;
+            const emojiList = document.getElementById('emojiList');
+            
+            // Скрываем, если уже показан
+            if (emojiList.classList.contains('show')) {
+                emojiList.classList.remove('show');
+                return;
+            }
+            
+            // Заполняем эмодзи
+            if (!emojiList.hasChildNodes()) {
+                emojiOptions.forEach(emoji => {
+                    const option = document.createElement('div');
+                    option.className = 'emoji-option';
+                    option.textContent = emoji;
+                    option.onclick = () => selectEmoji(emoji);
+                    emojiList.appendChild(option);
+                });
+            }
+            
+            // Позиционируем и показываем
+            const rect = pickerElement.getBoundingClientRect();
+            emojiList.style.position = 'absolute';
+            emojiList.style.top = (rect.bottom + 5) + 'px';
+            emojiList.style.left = rect.left + 'px';
+            emojiList.classList.add('show');
+        }
+
+        function selectEmoji(emoji) {
+            if (currentEmojiPicker) {
+                currentEmojiPicker.textContent = emoji;
+            }
+            document.getElementById('emojiList').classList.remove('show');
+        }
+
+        // Закрываем эмодзи пикер при клике вне его
+        document.addEventListener('click', function(e) {
+            const emojiList = document.getElementById('emojiList');
+            if (emojiList && !emojiList.contains(e.target) && !e.target.classList.contains('emoji-picker')) {
+                emojiList.classList.remove('show');
+            }
+        });
+
         // ==================== АНАЛИЗ ОТ ИИ ====================
 
         async function requestAIAnalysis() {
-            debugLog('🤖 Запрос анализа от ИИ...');
-            
             await forceSaveProgress();
             
             const analysisData = {
                 user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
-                user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Тестовый пользователь',
+                user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Пользователь',
                 username: tgApp?.initDataUnsafe?.user?.username || null,
                 timestamp: new Date().toISOString(),
                 date: new Date().toISOString().split('T')[0],
@@ -1324,15 +1359,28 @@
             const library = document.getElementById('habitLibrary');
             library.innerHTML = '';
             
+            // Получаем названия существующих привычек для сравнения
+            const existingHabitNames = habits.map(h => h.name);
+            
             habitLibrary.forEach((habit, index) => {
                 const div = document.createElement('div');
                 div.className = 'habit-option';
-                div.onclick = () => toggleHabitSelection(index, div);
                 
-                div.innerHTML = `
-                    <span>${habit.name}</span>
-                    <input type="number" value="${habit.defaultGoal}" min="1" max="31" class="goal-slider" onclick="event.stopPropagation()">
-                `;
+                // Проверяем, есть ли уже такая привычка
+                const isExisting = existingHabitNames.includes(habit.name);
+                if (isExisting) {
+                    div.classList.add('existing');
+                    div.innerHTML = `
+                        <span>${habit.name} ✓ Уже добавлено</span>
+                        <input type="number" value="${habit.defaultGoal}" min="1" max="31" class="goal-slider" disabled>
+                    `;
+                } else {
+                    div.onclick = () => toggleHabitSelection(index, div);
+                    div.innerHTML = `
+                        <span>${habit.name}</span>
+                        <input type="number" value="${habit.defaultGoal}" min="1" max="31" class="goal-slider" onclick="event.stopPropagation()">
+                    `;
+                }
                 
                 library.appendChild(div);
             });
@@ -1348,51 +1396,76 @@
             div.className = 'custom-habit';
             
             div.innerHTML = `
-                <input type="text" placeholder="🎯 Моя привычка..." class="custom-habit-input">
+                <div class="emoji-picker" onclick="showEmojiPicker(this)">📝</div>
+                <input type="text" placeholder="Название привычки..." class="custom-habit-input">
                 <input type="number" value="20" min="1" max="31" class="goal-slider">
                 <button onclick="this.parentElement.remove()" class="btn btn-secondary">−</button>
             `;
             
-            container.appendChild(div);
+            // Вставляем перед кнопкой добавления
+            const lastChild = container.lastElementChild;
+            container.insertBefore(div, lastChild);
         }
 
         async function finishSetup() {
-            habits = [];
+            let newHabits = [];
             
-            document.querySelectorAll('.habit-option.selected').forEach(option => {
+            // Добавляем выбранные готовые привычки (только новые)
+            document.querySelectorAll('.habit-option.selected:not(.existing)').forEach(option => {
                 const text = option.querySelector('span').textContent;
                 const goal = parseInt(option.querySelector('.goal-slider').value);
                 
-                habits.push({
+                newHabits.push({
                     name: text,
                     goal: goal,
                     icon: text.split(' ')[0]
                 });
             });
             
-            document.querySelectorAll('.custom-habit-input').forEach(input => {
-                if (input.value.trim()) {
-                    const goal = parseInt(input.parentElement.querySelector('.goal-slider').value);
-                    habits.push({
-                        name: input.value.trim(),
+            // Добавляем кастомные привычки
+            document.querySelectorAll('.custom-habit').forEach(habitDiv => {
+                const input = habitDiv.querySelector('.custom-habit-input');
+                if (input && input.value.trim()) {
+                    const emoji = habitDiv.querySelector('.emoji-picker').textContent;
+                    const goal = parseInt(habitDiv.querySelector('.goal-slider').value);
+                    newHabits.push({
+                        name: `${emoji} ${input.value.trim()}`,
                         goal: goal,
-                        icon: input.value.trim().split(' ')[0] || '📝'
+                        icon: emoji
                     });
                 }
             });
             
+            // Добавляем новые привычки к существующим
+            newHabits.forEach(newHabit => {
+                habits.push(newHabit);
+                const newIndex = habits.length - 1;
+                habitData[newIndex] = {};
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    habitData[newIndex][day] = false;
+                }
+            });
+            
+            // Если совсем нет привычек, добавляем примеры
             if (habits.length === 0) {
                 habits = [
                     { name: "🏃🏻 10000 шагов", goal: 25, icon: "🏃🏻" },
                     { name: "🥗 Здоровое питание", goal: 25, icon: "🥗" },
                     { name: "📖 Чтение книг", goal: 20, icon: "📖" }
                 ];
+                
+                habits.forEach((habit, index) => {
+                    habitData[index] = {};
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        habitData[index][day] = false;
+                    }
+                });
             }
             
             await forceSaveProgress();
             goBack();
             
-            initializeHabits();
             createHabitsTable();
             
             setTimeout(() => {
@@ -1405,20 +1478,6 @@
                     isInitialized = true;
                 }, 300);
             }, 500);
-        }
-
-        function initializeHabits() {
-            habits.forEach((habit, habitIndex) => {
-                if (!habitData[habitIndex]) {
-                    habitData[habitIndex] = {};
-                }
-                
-                for (let day = 1; day <= daysInMonth; day++) {
-                    if (habitData[habitIndex][day] === undefined) {
-                        habitData[habitIndex][day] = false;
-                    }
-                }
-            });
         }
 
         function createHabitsTable() {
@@ -1481,7 +1540,11 @@
 
         async function deleteHabit(index) {
             if (habits.length <= 1) {
-                alert('Нельзя удалить последнюю привычку!');
+                if (tgApp) {
+                    tgApp.showAlert('Нельзя удалить последнюю привычку!');
+                } else {
+                    alert('Нельзя удалить последнюю привычку!');
+                }
                 return;
             }
             
@@ -1507,28 +1570,6 @@
                     updateVerticalBars();
                     updateProgress();
                 }, 200);
-                await forceSaveProgress();
-            }, 100);
-        }
-
-        async function addNewHabit() {
-            const newHabit = {
-                name: "📝 Новая привычка",
-                goal: 20,
-                icon: "📝"
-            };
-            
-            habits.push(newHabit);
-            const newIndex = habits.length - 1;
-            habitData[newIndex] = {};
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                habitData[newIndex][day] = false;
-            }
-            
-            createHabitsTable();
-            setTimeout(async () => {
-                updateVerticalBars();
                 await forceSaveProgress();
             }, 100);
         }
@@ -1610,50 +1651,13 @@
             }, 200);
         }
 
-        // ==================== УТИЛИТЫ ====================
-
-        function exportCSV() {
-            let csv = 'Привычка,Цель,Факт';
-            for (let day = 1; day <= daysInMonth; day++) {
-                csv += ',День ' + day;
-            }
-            csv += '\n';
-
-            habits.forEach((habit, habitIndex) => {
-                let completed = 0;
-                for (let day = 1; day <= daysInMonth; day++) {
-                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                        completed++;
-                    }
-                }
-                
-                csv += `"${habit.name}",${habit.goal},${completed}`;
-                for (let day = 1; day <= daysInMonth; day++) {
-                    csv += ',' + ((habitData[habitIndex] && habitData[habitIndex][day]) ? '1' : '0');
-                }
-                csv += '\n';
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'proryv-habits-september-2025.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }
-
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
         async function initializeApp() {
             const hasData = await loadAllData();
             
             if (hasData) {
-                initializeHabits();
                 createHabitsTable();
-                
                 updateStatisticsDisplay();
                 
                 setTimeout(() => {
