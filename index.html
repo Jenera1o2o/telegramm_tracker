@@ -43,11 +43,33 @@
             position: relative;
         }
 
+        .header-logo {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            vertical-align: middle;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .header-logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffffff;
+        }
+
         .header h1 {
             font-size: 24px;
             margin-bottom: 8px;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .month-selector {
@@ -563,7 +585,7 @@
     <div id="setupWizard" class="setup-wizard" style="display: none;">
         <div class="setup-header">
             <button class="back-button" onclick="goBack()">←</button>
-            <h2>🚀 Настройка вашего трекера</h2>
+            <h2>Настройка вашего трекера</h2>
             <p>Выберите привычки из готовых или создайте свои</p>
         </div>
 
@@ -596,7 +618,12 @@
     <div class="container" id="mainApp">
         <!-- Header -->
         <div class="header">
-            <h1>🚀 Прорыв</h1>
+            <div class="header-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h1>Прорыв</h1>
             <div class="month-selector">Сентябрь 2025</div>
         </div>
 
@@ -694,7 +721,8 @@
             totalCompleted: 0,
             averageProgress: 0,
             bestHabit: '📊',
-            currentStreak: 0
+            currentStreak: 0,
+            habitProgress: [] // Добавляем кеш для детальной статистики
         };
 
         // Инициализация Telegram WebApp
@@ -845,13 +873,7 @@
             let saveData = { ...data };
             
             // Сохраняем кеш статистики вместе с данными
-            if (key === 'habit_progress') {
-                saveData.statisticsCache = statisticsCache;
-            }
-            
-            if (key === 'user_settings') {
-                saveData.statisticsCache = statisticsCache;
-            }
+            saveData.statisticsCache = statisticsCache;
             
             // Применяем сжатие для данных привычек
             if (data.habitData) {
@@ -860,7 +882,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '9.0-light-stats'
+                    version: '10.0-fixed-streak'
                 };
             }
             
@@ -1111,8 +1133,22 @@
 
         // ==================== СТАТИСТИКА ====================
 
+        function getCurrentDay() {
+            // Получаем текущий день месяца для сентября 2025
+            const currentDate = new Date();
+            // Если сейчас сентябрь 2025, используем текущий день, иначе используем 8 (примерная дата)
+            const currentDay = (currentDate.getFullYear() === 2025 && currentDate.getMonth() === 8) 
+                ? currentDate.getDate() 
+                : 8; // Дефолтный день для тестирования
+            
+            return Math.min(currentDay, daysInMonth);
+        }
+
         function calculateStatistics() {
             debugLog('📊 Пересчитываем статистику...');
+            
+            const currentDay = getCurrentDay();
+            debugLog(`📅 Текущий день: ${currentDay}`);
             
             // Считаем статистику
             let totalCompleted = 0;
@@ -1138,18 +1174,23 @@
             const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
             const bestHabit = habits[bestHabitIndex];
 
-            // Считаем текущую серию
+            // ИСПРАВЛЕННЫЙ подсчет дней подряд с текущего дня назад
             let currentStreak = 0;
-            for (let day = daysInMonth; day >= 1; day--) {
-                let dayComplete = false;
+            for (let day = currentDay; day >= 1; day--) {
+                let dayHasAnyCompletedHabit = false;
+                
+                // Проверяем, есть ли хотя бы одна выполненная привычка в этот день
                 habits.forEach((habit, habitIndex) => {
                     if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                        dayComplete = true;
+                        dayHasAnyCompletedHabit = true;
                     }
                 });
-                if (dayComplete) {
+                
+                if (dayHasAnyCompletedHabit) {
                     currentStreak++;
+                    debugLog(`📅 День ${day}: есть выполненные привычки, серия = ${currentStreak}`);
                 } else {
+                    debugLog(`📅 День ${day}: нет выполненных привычек, прерываем серию на ${currentStreak}`);
                     break;
                 }
             }
@@ -1159,10 +1200,13 @@
                 totalCompleted: totalCompleted,
                 averageProgress: averageProgress,
                 bestHabit: bestHabit ? bestHabit.icon : '📊',
-                currentStreak: currentStreak
+                currentStreak: currentStreak,
+                habitProgress: habitProgress // Кешируем детальную статистику
             };
             
             debugLog(`📊 Пересчитанная статистика: ${JSON.stringify(statisticsCache)}`);
+            debugLog(`🔥 Дней подряд: ${currentStreak} (проверили с дня ${currentDay} до 1)`);
+            
             return statisticsCache;
         }
 
@@ -1188,6 +1232,7 @@
             }
             if (currentStreakEl) {
                 currentStreakEl.textContent = statisticsCache.currentStreak;
+                debugLog(`📊 Показано дней подряд: ${statisticsCache.currentStreak}`);
             }
         }
 
@@ -1553,7 +1598,7 @@
                         labels: habits.map(h => h.icon),
                         datasets: [{
                             label: 'Прогресс (%)',
-                            data: habits.map(() => 0),
+                            data: statisticsCache.habitProgress || habits.map(() => 0),
                             backgroundColor: '#20b2aa',
                             borderColor: '#1e90ff',
                             borderWidth: 2,
@@ -1648,21 +1693,9 @@
 
             if (habitsChart) {
                 try {
-                    const habitProgress = [];
-                    habits.forEach((habit, habitIndex) => {
-                        let completed = 0;
-                        for (let day = 1; day <= daysInMonth; day++) {
-                            if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                                completed++;
-                            }
-                        }
-                        const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
-                        habitProgress.push(Math.min(progress, 100));
-                    });
-                    
-                    habitsChart.data.datasets[0].data = habitProgress;
+                    habitsChart.data.datasets[0].data = stats.habitProgress;
                     habitsChart.update();
-                    debugLog(`📊 Гистограмма обновлена для ${habitProgress.length} привычек`);
+                    debugLog(`📊 Гистограмма обновлена для ${stats.habitProgress.length} привычек: ${stats.habitProgress}`);
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления гистограммы: ${error}`);
                 }
@@ -1699,7 +1732,13 @@
                         if (progressChart && statisticsCache.averageProgress) {
                             progressChart.data.datasets[0].data = [statisticsCache.averageProgress, 100 - statisticsCache.averageProgress];
                             progressChart.update();
-                            debugLog(`📊 Диаграмма восстановлена: ${statisticsCache.averageProgress}%`);
+                            debugLog(`📊 Круговая диаграмма восстановлена: ${statisticsCache.averageProgress}%`);
+                        }
+                        
+                        if (habitsChart && statisticsCache.habitProgress) {
+                            habitsChart.data.datasets[0].data = statisticsCache.habitProgress;
+                            habitsChart.update();
+                            debugLog(`📊 Гистограмма восстановлена: ${statisticsCache.habitProgress}`);
                         }
                     }, 100);
                 } else {
