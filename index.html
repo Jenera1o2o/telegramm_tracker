@@ -18,8 +18,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fb;
-            color: #2c3e50;
+            background: #0f0f23;
+            color: #ffffff;
             min-height: 100vh;
             padding: 10px;
             font-size: 14px;
@@ -28,106 +28,119 @@
         .container {
             max-width: 100%;
             margin: 0 auto;
-            background: #ffffff;
-            border-radius: 12px;
+            background: #1a1a2e;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(74, 84, 112, 0.1);
+            box-shadow: 0 8px 32px rgba(32, 178, 170, 0.1);
+            border: 1px solid #16213e;
         }
 
         .header {
-            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
-            padding: 15px;
+            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
+            padding: 20px;
             color: #ffffff;
             text-align: center;
             position: relative;
         }
 
         .header h1 {
-            font-size: 20px;
-            margin-bottom: 5px;
-            font-weight: 600;
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .month-selector {
             display: inline-block;
             background: rgba(255,255,255,0.2);
-            padding: 4px 8px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 14px;
-            margin-top: 5px;
+            margin-top: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            padding: 12px;
-            background: #f8f9fb;
+            gap: 12px;
+            padding: 16px;
+            background: #0f0f23;
         }
 
         .stat-card {
-            background: #ffffff;
-            padding: 8px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            padding: 16px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
-            border: 1px solid #e8eaf0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            border: 1px solid #20b2aa20;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #20b2aa;
+            box-shadow: 0 8px 24px rgba(32, 178, 170, 0.2);
         }
 
         .stat-number {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            color: #4a5470;
-            margin-bottom: 2px;
+            color: #20b2aa;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            color: #8891aa;
+            color: #a0a0a0;
             font-size: 11px;
         }
 
         .main-content {
-            padding: 12px;
+            padding: 16px;
+            background: #0f0f23;
         }
 
         .tracker-section {
             overflow-x: auto;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .tracker-table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 8px;
+            background: #1a1a2e;
+            border-radius: 12px;
             overflow: hidden;
             font-size: 12px;
-            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            border: 1px solid #16213e;
         }
 
         .tracker-table th {
-            background: #4a5470;
+            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
             color: #ffffff;
-            padding: 8px 4px;
-            font-weight: 500;
+            padding: 12px 6px;
+            font-weight: 600;
             text-align: center;
             font-size: 11px;
         }
 
         .tracker-table td {
-            padding: 6px 4px;
+            padding: 8px 6px;
             text-align: center;
-            border-bottom: 1px solid #f0f2f5;
+            border-bottom: 1px solid #16213e;
+            background: #1a1a2e;
         }
 
         .habit-row:hover {
-            background-color: #f8f9fb;
+            background-color: #16213e;
         }
 
         .habit-name {
             text-align: left !important;
             font-weight: 500;
-            padding-left: 8px !important;
+            padding-left: 12px !important;
             min-width: 120px;
             font-size: 11px;
             position: relative;
@@ -136,7 +149,7 @@
         .habit-input {
             background: transparent;
             border: none;
-            color: #2c3e50;
+            color: #ffffff;
             font-size: 11px;
             font-weight: 500;
             width: 100%;
@@ -144,15 +157,15 @@
         }
 
         .habit-input:focus {
-            background: #f8f9fb;
-            padding: 2px;
-            border-radius: 4px;
+            background: #16213e;
+            padding: 4px;
+            border-radius: 6px;
         }
 
         .goal-input {
             background: transparent;
             border: none;
-            color: #2c3e50;
+            color: #20b2aa;
             font-size: 12px;
             font-weight: bold;
             width: 30px;
@@ -161,7 +174,7 @@
         }
 
         .goal-input:focus {
-            background: #f8f9fb;
+            background: #16213e;
             border-radius: 4px;
         }
 
@@ -169,11 +182,11 @@
             width: 16px;
             height: 16px;
             cursor: pointer;
-            accent-color: #4a5470;
+            accent-color: #20b2aa;
         }
 
         .delete-habit {
-            color: #e74c3c;
+            color: #ff6b6b;
             cursor: pointer;
             font-size: 12px;
             margin-left: 5px;
@@ -187,105 +200,109 @@
         .charts-section {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         .chart-container {
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(74, 84, 112, 0.08);
-            border: 1px solid #e8eaf0;
+            background: #1a1a2e;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            border: 1px solid #16213e;
         }
 
         .chart-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: #2c3e50;
+            margin-bottom: 12px;
+            color: #20b2aa;
             text-align: center;
         }
 
         .progress-overview {
-            height: 180px;
+            height: 200px;
         }
 
         .habits-progress {
-            height: 200px;
+            height: 220px;
         }
 
         .controls {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
-            margin-top: 15px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
 
         .btn {
-            padding: 8px 12px;
+            padding: 10px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
             font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
+            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
             color: #ffffff;
-            border: 1px solid #4a5470;
+            border: 1px solid transparent;
         }
 
         .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(74, 84, 112, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(32, 178, 170, 0.4);
         }
 
         .btn-secondary {
-            background: #f8f9fb;
-            color: #4a5470;
-            border: 1px solid #e8eaf0;
+            background: #16213e;
+            color: #ffffff;
+            border: 1px solid #20b2aa40;
         }
 
         .btn-secondary:hover {
-            background: #f0f2f5;
+            background: #1a1a2e;
+            border-color: #20b2aa;
+            transform: translateY(-1px);
         }
 
         .btn-add {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            border: 1px solid #27ae60;
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: #ffffff;
+            border: 1px solid transparent;
         }
 
         .btn-add:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white;
-            border: 1px solid #f39c12;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            border: 1px solid transparent;
         }
 
         .btn-save:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
         }
 
         .btn-ai {
-            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-            color: white;
-            border: 1px solid #9b59b6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            border: 1px solid transparent;
         }
 
         .btn-ai:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
         }
 
         .btn:active {
@@ -293,7 +310,7 @@
         }
 
         .week-separator {
-            border-left: 2px solid #e8eaf0 !important;
+            border-left: 2px solid #20b2aa !important;
         }
 
         /* Setup Wizard */
@@ -303,7 +320,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background: #0f0f23;
             z-index: 1000;
             padding: 20px;
             overflow-y: auto;
@@ -311,7 +328,7 @@
 
         .setup-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             position: relative;
         }
 
@@ -319,83 +336,87 @@
             position: absolute;
             left: 0;
             top: 0;
-            background: none;
-            border: none;
-            font-size: 24px;
+            background: #16213e;
+            border: 1px solid #20b2aa40;
+            font-size: 20px;
             cursor: pointer;
-            color: #4a5470;
-            padding: 8px;
-            border-radius: 8px;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
 
         .back-button:hover {
-            background: #f8f9fb;
+            background: #1a1a2e;
+            border-color: #20b2aa;
         }
 
         .setup-section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .setup-section h3 {
-            color: #4a5470;
-            margin-bottom: 15px;
-            font-size: 16px;
+            color: #20b2aa;
+            margin-bottom: 16px;
+            font-size: 18px;
         }
 
         .habit-library {
             display: grid;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .habit-option {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: #f8f9fb;
-            border-radius: 8px;
+            padding: 12px;
+            background: #16213e;
+            border-radius: 12px;
             cursor: pointer;
-            border: 1px solid #e8eaf0;
-            transition: all 0.2s;
+            border: 1px solid #20b2aa20;
+            transition: all 0.3s ease;
         }
 
         .habit-option:hover {
-            border-color: #4a5470;
+            border-color: #20b2aa;
+            transform: translateY(-1px);
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #4a5470 0%, #6c7b95 100%);
-            color: #ffffff;
-            border-color: #4a5470;
+            background: linear-gradient(135deg, #20b2aa20 0%, #1e90ff20 100%);
+            border-color: #20b2aa;
         }
 
         .goal-slider {
             width: 60px;
             margin-left: 10px;
-            padding: 4px;
-            border: 1px solid #e8eaf0;
-            border-radius: 4px;
+            padding: 6px;
+            border: 1px solid #20b2aa40;
+            border-radius: 6px;
+            background: #1a1a2e;
+            color: #ffffff;
         }
 
         .custom-habit {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 12px;
+            margin-bottom: 12px;
             align-items: center;
         }
 
         .custom-habit input {
             flex: 1;
-            padding: 8px;
-            border: 1px solid #e8eaf0;
-            border-radius: 6px;
-            background: #ffffff;
-            color: #2c3e50;
+            padding: 10px;
+            border: 1px solid #20b2aa40;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #ffffff;
         }
 
         .custom-habit input:focus {
-            border-color: #4a5470;
+            border-color: #20b2aa;
             outline: none;
         }
 
@@ -404,16 +425,17 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #27ae60;
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
             color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
+            padding: 10px 16px;
+            border-radius: 24px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             opacity: 0;
             transform: translateY(-10px);
-            transition: all 0.3s;
+            transition: all 0.4s ease;
             z-index: 1001;
+            backdrop-filter: blur(10px);
         }
 
         .save-indicator.show {
@@ -422,7 +444,7 @@
         }
 
         .save-indicator.error {
-            background: #e74c3c;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
         }
 
         /* Debug панель */
@@ -431,16 +453,31 @@
             bottom: 10px;
             left: 10px;
             right: 10px;
-            background: #2c3e50;
-            color: white;
-            padding: 8px;
-            border-radius: 8px;
+            background: rgba(26, 26, 46, 0.95);
+            color: #20b2aa;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 10px;
-            font-family: monospace;
-            max-height: 120px;
+            font-family: 'Courier New', monospace;
+            max-height: 140px;
             overflow-y: auto;
             z-index: 1002;
-            opacity: 0.9;
+            border: 1px solid #20b2aa40;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #20b2aa;
+            border-radius: 3px;
         }
 
         @media (max-width: 480px) {
@@ -451,16 +488,16 @@
             
             .stats-bar {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-                padding: 8px;
+                gap: 8px;
+                padding: 12px;
             }
             
             .header h1 {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             .main-content {
-                padding: 8px;
+                padding: 12px;
             }
             
             .tracker-table {
@@ -469,7 +506,7 @@
             
             .tracker-table th,
             .tracker-table td {
-                padding: 4px 2px;
+                padding: 6px 3px;
             }
 
             .day-checkbox {
@@ -483,11 +520,11 @@
             }
 
             .controls {
-                gap: 6px;
+                gap: 8px;
             }
 
             .btn {
-                padding: 6px 10px;
+                padding: 8px 12px;
                 font-size: 11px;
             }
         }
@@ -799,7 +836,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '7.0-compressed'
+                    version: '8.0-perplexity'
                 };
             }
             
@@ -809,7 +846,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '7.0-compressed'
+                    version: '8.0-perplexity'
                 };
             }
             
@@ -1193,9 +1230,12 @@
             setTimeout(() => {
                 initializeCharts();
                 restoreCheckboxes();
-                updateProgress();
-                isInitialized = true;
-                debugLog('✅ Инициализация завершена');
+                // ВАЖНО: обновляем статистику после восстановления
+                setTimeout(() => {
+                    updateProgress();
+                    isInitialized = true;
+                    debugLog('✅ Инициализация завершена');
+                }, 200);
             }, 300);
         }
 
@@ -1304,7 +1344,7 @@
             createHabitsTable();
             setTimeout(async () => {
                 restoreCheckboxes();
-                updateProgress();
+                setTimeout(() => updateProgress(), 100);
                 await forceSaveProgress();
             }, 100);
         }
@@ -1357,9 +1397,10 @@
                         labels: ['Выполнено', 'Осталось'],
                         datasets: [{
                             data: [0, 100],
-                            backgroundColor: ['#4a5470', '#e8eaf0'],
-                            borderWidth: 0,
-                            cutout: '70%'
+                            backgroundColor: ['#20b2aa', '#16213e'],
+                            borderWidth: 2,
+                            borderColor: '#0f0f23',
+                            cutout: '75%'
                         }]
                     },
                     options: {
@@ -1369,9 +1410,10 @@
                             legend: {
                                 position: 'bottom',
                                 labels: {
-                                    padding: 15,
+                                    padding: 20,
                                     usePointStyle: true,
-                                    font: { size: 12 }
+                                    font: { size: 12 },
+                                    color: '#ffffff'
                                 }
                             }
                         }
@@ -1392,10 +1434,11 @@
                         datasets: [{
                             label: 'Прогресс (%)',
                             data: habits.map(() => 0),
-                            backgroundColor: '#4a5470',
-                            borderColor: '#6c7b95',
-                            borderWidth: 1,
-                            borderRadius: 4
+                            backgroundColor: '#20b2aa',
+                            borderColor: '#1e90ff',
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            borderSkipped: false,
                         }]
                     },
                     options: {
@@ -1407,12 +1450,26 @@
                                 max: 100,
                                 ticks: {
                                     callback: function(value) { return value + '%'; },
-                                    font: { size: 10 }
+                                    font: { size: 10 },
+                                    color: '#a0a0a0'
+                                },
+                                grid: {
+                                    color: '#16213e'
                                 }
                             },
-                            x: { ticks: { font: { size: 12 } } }
+                            x: { 
+                                ticks: { 
+                                    font: { size: 14 },
+                                    color: '#ffffff'
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
                         },
-                        plugins: { legend: { display: false } }
+                        plugins: { 
+                            legend: { display: false }
+                        }
                     }
                 });
                 debugLog('✅ Гистограмма создана');
@@ -1427,6 +1484,8 @@
                 debugLog('❌ Приложение не инициализировано, пропускаем updateProgress');
                 return;
             }
+            
+            debugLog('📊 Обновляем прогресс и статистику...');
             
             // Обновляем данные из чекбоксов
             let checkedCount = 0;
@@ -1498,16 +1557,27 @@
             const bestHabitEl = document.getElementById('bestHabit');
             const currentStreakEl = document.getElementById('currentStreak');
             
-            if (totalCompletedEl) totalCompletedEl.textContent = totalCompleted;
-            if (averageProgressEl) averageProgressEl.textContent = averageProgress + '%';
-            if (bestHabitEl) bestHabitEl.textContent = bestHabit ? bestHabit.icon : '📊';
-            if (currentStreakEl) currentStreakEl.textContent = currentStreak;
+            if (totalCompletedEl) {
+                totalCompletedEl.textContent = totalCompleted;
+                debugLog(`📊 Статистика обновлена: ${totalCompleted} заданий`);
+            }
+            if (averageProgressEl) {
+                averageProgressEl.textContent = averageProgress + '%';
+                debugLog(`📊 Средний прогресс: ${averageProgress}%`);
+            }
+            if (bestHabitEl) {
+                bestHabitEl.textContent = bestHabit ? bestHabit.icon : '📊';
+            }
+            if (currentStreakEl) {
+                currentStreakEl.textContent = currentStreak;
+            }
 
             // Обновляем диаграммы
             if (progressChart) {
                 try {
                     progressChart.data.datasets[0].data = [averageProgress, 100 - averageProgress];
                     progressChart.update();
+                    debugLog(`📊 Круговая диаграмма обновлена: ${averageProgress}%`);
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления круговой диаграммы: ${error}`);
                 }
@@ -1517,6 +1587,7 @@
                 try {
                     habitsChart.data.datasets[0].data = habitProgress;
                     habitsChart.update();
+                    debugLog(`📊 Гистограмма обновлена для ${habitProgress.length} привычек`);
                 } catch (error) {
                     debugLog(`❌ Ошибка обновления гистограммы: ${error}`);
                 }
@@ -1542,6 +1613,12 @@
                 
                 if (restoredCount > 0) {
                     showSaveIndicator(true, `✅ Восстановлено ${restoredCount} галочек`);
+                    
+                    // ВАЖНО: принудительно обновляем статистику после восстановления
+                    setTimeout(() => {
+                        debugLog('🔄 Принудительное обновление статистики после восстановления');
+                        updateProgress();
+                    }, 100);
                 } else {
                     debugLog(`ℹ️ Галочки не найдены для восстановления`);
                 }
@@ -1592,9 +1669,12 @@
                 setTimeout(() => {
                     initializeCharts();
                     restoreCheckboxes();
-                    updateProgress();
-                    isInitialized = true;
-                    debugLog('✅ Приложение полностью инициализировано');
+                    // ВАЖНО: даем время на восстановление галочек перед обновлением статистики
+                    setTimeout(() => {
+                        updateProgress();
+                        isInitialized = true;
+                        debugLog('✅ Приложение полностью инициализировано со статистикой');
+                    }, 400);
                 }, 500);
                 
             } else {
