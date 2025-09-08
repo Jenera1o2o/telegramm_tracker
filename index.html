@@ -84,10 +84,15 @@
 
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             padding: 16px;
             background: #f8fafc;
+        }
+
+        .stats-bar-progress {
+            grid-column: 1 / -1;
+            margin-top: 12px;
         }
 
         .stat-card {
@@ -118,6 +123,48 @@
             font-size: 11px;
         }
 
+        .progress-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .progress-percent {
+            font-size: 18px;
+            font-weight: bold;
+            color: #20b2aa;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #20b2aa 0%, #1e90ff 100%);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
         .main-content {
             padding: 16px;
             background: #ffffff;
@@ -140,12 +187,13 @@
         }
 
         .tracker-table th {
-            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
-            color: #ffffff;
+            background: #f8fafc;
+            color: #1e293b;
             padding: 12px 6px;
             font-weight: 600;
             text-align: center;
             font-size: 11px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         .tracker-table td {
@@ -201,6 +249,12 @@
             border-radius: 4px;
         }
 
+        .fact-cell {
+            font-weight: bold;
+            color: #20b2aa;
+            font-size: 12px;
+        }
+
         .day-checkbox {
             width: 16px;
             height: 16px;
@@ -242,12 +296,54 @@
             text-align: center;
         }
 
-        .progress-overview {
-            height: 200px;
-        }
-
         .habits-progress {
             height: 220px;
+            overflow-x: auto;
+        }
+
+        .vertical-bars-container {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            min-width: fit-content;
+        }
+
+        .vertical-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+        }
+
+        .bar-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            filter: grayscale(20%) brightness(120%);
+        }
+
+        .bar-wrapper {
+            width: 24px;
+            height: 120px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .bar-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, #20b2aa 0%, #16a085 100%);
+            border-radius: 12px;
+            transition: height 0.3s ease;
+        }
+
+        .bar-label {
+            font-size: 10px;
+            color: #64748b;
+            text-align: center;
         }
 
         .controls {
@@ -555,6 +651,15 @@
                 padding: 8px 12px;
                 font-size: 11px;
             }
+
+            .vertical-bars-container {
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .vertical-bar {
+                min-width: 50px;
+            }
         }
 
         @media (max-width: 360px) {
@@ -634,16 +739,21 @@
                 <div class="stat-label">Выполнено заданий</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="averageProgress">0%</div>
-                <div class="stat-label">Средний прогресс</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="bestHabit">📊</div>
+                <div class="stat-number" id="bestHabit">📋</div>
                 <div class="stat-label">Лучшая привычка</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="currentStreak">0</div>
-                <div class="stat-label">Дней подряд</div>
+            
+            <!-- Общий прогресс на всю длину -->
+            <div class="stats-bar-progress">
+                <div class="progress-card">
+                    <div class="progress-header">
+                        <div class="progress-title">Общий прогресс</div>
+                        <div class="progress-percent" id="overallProgress">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -656,6 +766,7 @@
                         <tr>
                             <th>Привычки</th>
                             <th>Цель</th>
+                            <th>Факт</th>
                             <!-- Week 1 -->
                             <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
                             <!-- Week 2 -->
@@ -676,19 +787,13 @@
 
             <!-- Charts Section -->
             <div class="charts-section">
-                <!-- Progress Overview Chart -->
-                <div class="chart-container">
-                    <div class="chart-title">📊 Обзор прогресса</div>
-                    <div class="progress-overview">
-                        <canvas id="progressChart"></canvas>
-                    </div>
-                </div>
-
                 <!-- Habits Progress Chart -->
                 <div class="chart-container">
                     <div class="chart-title">📈 Детальная статистика</div>
                     <div class="habits-progress">
-                        <canvas id="habitsChart"></canvas>
+                        <div class="vertical-bars-container" id="verticalBars">
+                            <!-- Будет заполнено JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -711,18 +816,15 @@
         let habits = [];
         let habitData = {};
         const daysInMonth = 30;
-        let progressChart = null;
-        let habitsChart = null;
         let isInitialized = false;
         let debugMode = false;
 
         // Статистические кеши для принудительного обновления
         let statisticsCache = {
             totalCompleted: 0,
-            averageProgress: 0,
-            bestHabit: '📊',
-            currentStreak: 0,
-            habitProgress: [] // Добавляем кеш для детальной статистики
+            overallProgress: 0,
+            bestHabit: '📋',
+            habitProgress: []
         };
 
         // Инициализация Telegram WebApp
@@ -737,7 +839,6 @@
 
         // ==================== ФУНКЦИИ СЖАТИЯ ДАННЫХ ====================
 
-        // Сжимаем habitData в компактный битовый формат
         function compressHabitData(habitData) {
             debugLog('🗜️ Начинаем сжатие habitData...');
             const compressed = [];
@@ -746,26 +847,21 @@
                 const days = habitData[habitIndex];
                 let bitString = '';
                 
-                // Конвертируем 30 булевых значений в битовую строку
                 for (let day = 1; day <= 30; day++) {
                     bitString += days[day] ? '1' : '0';
                 }
                 
-                // Конвертируем битовую строку в число
                 const compressed30Days = parseInt(bitString, 2);
                 compressed[habitIndex] = compressed30Days;
-                
-                debugLog(`Привычка ${habitIndex}: ${bitString} → ${compressed30Days}`);
             });
             
             const originalSize = JSON.stringify(habitData).length;
             const compressedSize = JSON.stringify(compressed).length;
-            debugLog(`🗜️ Сжатие: ${originalSize} → ${compressedSize} байт (сжатие в ${Math.round(originalSize/compressedSize)}x)`);
+            debugLog(`🗜️ Сжатие: ${originalSize} → ${compressedSize} байт`);
             
             return compressed;
         }
 
-        // Распаковываем данные обратно
         function decompressHabitData(compressed) {
             debugLog('📤 Начинаем распаковку habitData...');
             const habitData = {};
@@ -773,31 +869,25 @@
             compressed.forEach((compressedDays, habitIndex) => {
                 if (compressedDays === undefined || compressedDays === null) return;
                 
-                // Конвертируем число обратно в битовую строку (30 бит)
                 const bitString = compressedDays.toString(2).padStart(30, '0');
                 
                 habitData[habitIndex] = {};
                 for (let day = 1; day <= 30; day++) {
                     habitData[habitIndex][day] = bitString[day - 1] === '1';
                 }
-                
-                debugLog(`Привычка ${habitIndex}: ${compressedDays} → ${bitString}`);
             });
             
-            debugLog(`📤 Распаковано данных для ${Object.keys(habitData).length} привычек`);
             return habitData;
         }
 
-        // Сжимаем только названия привычек (убираем лишние поля)
         function compressHabits(habits) {
             return habits.map(habit => ({
-                n: habit.name.substring(0, 50), // Ограничиваем длину
+                n: habit.name.substring(0, 50),
                 g: habit.goal,
                 i: habit.icon
             }));
         }
 
-        // Распаковываем названия привычек
         function decompressHabits(compressed) {
             if (!compressed) return [];
             return compressed.map(h => ({
@@ -816,7 +906,6 @@
                 const time = new Date().toLocaleTimeString();
                 panel.innerHTML = `[${time}] ${message}<br>` + panel.innerHTML;
                 
-                // Ограничиваем количество строк
                 const lines = panel.innerHTML.split('<br>');
                 if (lines.length > 15) {
                     panel.innerHTML = lines.slice(0, 15).join('<br>');
@@ -829,27 +918,22 @@
             const panel = document.getElementById('debugPanel');
             panel.style.display = debugMode ? 'block' : 'none';
             debugLog('Debug режим: ' + (debugMode ? 'ВКЛ' : 'ВЫКЛ'));
-            
-            if (debugMode) {
-                debugLog(`Текущее состояние: ${habits.length} привычек, CloudStorage: ${!!tgApp?.CloudStorage}`);
-                debugLog(`Кеш статистики: ${JSON.stringify(statisticsCache)}`);
-            }
         }
 
-        // Библиотека готовых привычек
+        // Библиотека готовых привычек с пастельными эмодзи
         const habitLibrary = [
-            { name: "🏃‍♂️ Утренняя пробежка", defaultGoal: 20 },
-            { name: "🧘‍♀️ Медитация", defaultGoal: 30 },
-            { name: "🏋️‍♂️ Спортзал", defaultGoal: 15 },
+            { name: "🏃🏻 Утренняя пробежка", defaultGoal: 20 },
+            { name: "🧘🏻 Медитация", defaultGoal: 30 },
+            { name: "🏋🏻 Спортзал", defaultGoal: 15 },
             { name: "💧 Пить 2л воды", defaultGoal: 30 },
-            { name: "🚶‍♂️ 10000 шагов", defaultGoal: 25 },
+            { name: "🚶🏻 10000 шагов", defaultGoal: 25 },
             { name: "📖 Чтение книг", defaultGoal: 20 },
             { name: "🎧 Подкасты", defaultGoal: 15 },
-            { name: "✍️ Ведение дневника", defaultGoal: 25 },
+            { name: "✍🏻 Ведение дневника", defaultGoal: 25 },
             { name: "🧠 Изучение языка", defaultGoal: 20 },
             { name: "🏠 Уборка дома", defaultGoal: 10 },
             { name: "🍳 Готовка дома", defaultGoal: 20 },
-            { name: "🛏️ Заправлять кровать", defaultGoal: 30 },
+            { name: "🛏 Заправлять кровать", defaultGoal: 30 },
             { name: "⏰ Подъем в 6:00", defaultGoal: 25 },
             { name: "📱 Цифровой детокс", defaultGoal: 20 },
             { name: "🎯 Планирование дня", defaultGoal: 30 }
@@ -871,57 +955,42 @@
             debugLog(`💾 Начинаем сохранение: ${key}`);
             
             let saveData = { ...data };
-            
-            // Сохраняем кеш статистики вместе с данными
             saveData.statisticsCache = statisticsCache;
             
-            // Применяем сжатие для данных привычек
             if (data.habitData) {
                 saveData = {
                     ...saveData,
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '10.0-fixed-streak'
+                    version: '11.0-improved-ui'
                 };
             }
             
             const dataStr = JSON.stringify(saveData);
-            const originalStr = JSON.stringify(data);
             const dataSize = new Blob([dataStr]).size;
-            const originalSize = new Blob([originalStr]).size;
-            
-            debugLog(`📏 Размер: ${originalSize} → ${dataSize} байт (сжато в ${Math.round(originalSize/dataSize)}x)`);
             
             let saveSuccess = false;
             let method = '';
             
-            // 1. Пробуем CloudStorage
             if (tgApp?.CloudStorage) {
                 try {
                     await new Promise((resolve, reject) => {
                         tgApp.CloudStorage.setItem(key, dataStr, (error) => {
                             if (error) {
-                                debugLog(`❌ CloudStorage ошибка: ${error}`);
                                 reject(error);
                             } else {
-                                debugLog(`✅ Сохранено в CloudStorage: ${key} (${dataSize} байт)`);
                                 resolve();
                             }
                         });
-                        
-                        // Таймаут на случай зависания
                         setTimeout(() => reject('Timeout'), 10000);
                     });
                     
-                    // Проверяем, что данные действительно сохранились
                     await new Promise((resolve, reject) => {
                         tgApp.CloudStorage.getItem(key, (error, savedData) => {
                             if (error || !savedData) {
-                                debugLog(`❌ Проверка CloudStorage неудачна: ${error}`);
                                 reject('Verification failed');
                             } else {
-                                debugLog(`✅ CloudStorage проверка прошла для ${key}`);
                                 saveSuccess = true;
                                 method = 'CloudStorage';
                                 resolve();
@@ -933,11 +1002,9 @@
                 }
             }
             
-            // 2. Если CloudStorage не сработал - localStorage
             if (!saveSuccess) {
                 try {
                     localStorage.setItem(`proryv_${key}`, dataStr);
-                    debugLog(`✅ Сохранено в localStorage: ${key}`);
                     saveSuccess = true;
                     method = 'localStorage';
                 } catch (error) {
@@ -951,94 +1018,70 @@
         async function loadDataReliably(key) {
             debugLog(`📂 Начинаем загрузку: ${key}`);
             
-            // 1. Пробуем CloudStorage
             if (tgApp?.CloudStorage) {
                 try {
                     const cloudData = await new Promise((resolve, reject) => {
                         tgApp.CloudStorage.getItem(key, (error, data) => {
                             if (error) {
-                                debugLog(`❌ CloudStorage ошибка при загрузке: ${error}`);
                                 reject(error);
                             } else if (!data) {
-                                debugLog(`ℹ️ CloudStorage: данные не найдены для ${key}`);
                                 resolve(null);
                             } else {
-                                debugLog(`✅ Данные найдены в CloudStorage: ${key} (${data.length} символов)`);
                                 resolve(data);
                             }
                         });
-                        
-                        // Таймаут
-                        setTimeout(() => {
-                            debugLog(`⏰ CloudStorage таймаут для ${key}`);
-                            resolve(null);
-                        }, 5000);
+                        setTimeout(() => resolve(null), 5000);
                     });
                     
                     if (cloudData) {
                         const parsed = JSON.parse(cloudData);
                         
-                        // Восстанавливаем кеш статистики
                         if (parsed.statisticsCache) {
                             statisticsCache = parsed.statisticsCache;
-                            debugLog(`📊 Восстановлен кеш статистики: ${JSON.stringify(statisticsCache)}`);
                         }
                         
-                        // Проверяем, сжатые ли это данные
                         if (parsed.compressed && parsed.habitData) {
-                            debugLog(`🗜️ Найдены сжатые данные, распаковываем...`);
                             parsed.habitData = decompressHabitData(parsed.habitData);
                             if (parsed.habits) {
                                 parsed.habits = decompressHabits(parsed.habits);
                             }
-                            debugLog(`✅ Данные распакованы для ${key}`);
                         }
                         
                         return { data: parsed, source: 'CloudStorage' };
                     }
                 } catch (error) {
-                    debugLog(`❌ Ошибка при работе с CloudStorage: ${error}`);
+                    debugLog(`❌ CloudStorage ошибка: ${error}`);
                 }
             }
             
-            // 2. Fallback в localStorage
             try {
                 const localData = localStorage.getItem(`proryv_${key}`);
                 if (localData) {
                     const parsed = JSON.parse(localData);
                     
-                    // Восстанавливаем кеш статистики
                     if (parsed.statisticsCache) {
                         statisticsCache = parsed.statisticsCache;
-                        debugLog(`📊 Восстановлен кеш статистики из localStorage`);
                     }
                     
-                    // Проверяем, сжатые ли это данные
                     if (parsed.compressed && parsed.habitData) {
-                        debugLog(`🗜️ Найдены сжатые данные в localStorage, распаковываем...`);
                         parsed.habitData = decompressHabitData(parsed.habitData);
                         if (parsed.habits) {
                             parsed.habits = decompressHabits(parsed.habits);
                         }
                     }
                     
-                    debugLog(`✅ localStorage данные загружены: ${key}`);
                     return { data: parsed, source: 'localStorage' };
-                } else {
-                    debugLog(`ℹ️ localStorage: данные не найдены для ${key}`);
                 }
             } catch (error) {
                 debugLog(`❌ localStorage ошибка: ${error}`);
             }
             
-            debugLog(`❌ Данные не найдены нигде: ${key}`);
             return { data: null, source: null };
         }
 
         async function forceSaveProgress() {
             debugLog('=== ПРИНУДИТЕЛЬНОЕ СОХРАНЕНИЕ ===');
             
-            // Обновляем данные из чекбоксов
             let checkedCount = 0;
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const habitIndex = parseInt(checkbox.dataset.habit);
@@ -1049,10 +1092,7 @@
                     if (checkbox.checked) checkedCount++;
                 }
             });
-            
-            debugLog(`📊 Обновлено ${checkedCount} галочек для ${habits.length} привычек`);
 
-            // Принудительно пересчитываем статистику перед сохранением
             calculateStatistics();
 
             const progressData = {
@@ -1072,20 +1112,15 @@
                 statisticsCache: statisticsCache
             };
             
-            debugLog(`💾 Сохраняем: ${checkedCount} галочек, ${habits.length} привычек, статистика: ${JSON.stringify(statisticsCache)}`);
-            
-            // Сохраняем параллельно
             const [progressResult, settingsResult] = await Promise.all([
                 saveDataReliably('habit_progress', progressData),
                 saveDataReliably('user_settings', settingsData)
             ]);
             
             if (progressResult.success && settingsResult.success) {
-                showSaveIndicator(true, `✅ Сохранено (${progressResult.method}, ${progressResult.size}б)`);
-                debugLog(`✅ ВСЕ СОХРАНЕНО! Метод: ${progressResult.method}, размер: ${progressResult.size} байт`);
+                showSaveIndicator(true, `✅ Сохранено (${progressResult.size}б)`);
             } else {
                 showSaveIndicator(false, '❌ Ошибка сохранения');
-                debugLog(`❌ ОШИБКА СОХРАНЕНИЯ!`);
             }
         }
 
@@ -1097,20 +1132,15 @@
                 loadDataReliably('habit_progress')
             ]);
             
-            debugLog(`📂 Настройки: ${settingsResult.source || 'НЕ НАЙДЕНЫ'}`);
-            debugLog(`📂 Прогресс: ${progressResult.source || 'НЕ НАЙДЕНЫ'}`);
-            
             if (settingsResult.data) {
                 habits = settingsResult.data.habits || [];
                 if (settingsResult.data.habitData) {
                     habitData = settingsResult.data.habitData;
                 }
-                debugLog(`📋 Загружено ${habits.length} привычек из настроек`);
             }
             
             if (progressResult.data) {
                 if (progressResult.data.habitData) {
-                    // Объединяем данные прогресса
                     Object.keys(progressResult.data.habitData).forEach(habitIndex => {
                         if (!habitData[habitIndex]) {
                             habitData[habitIndex] = {};
@@ -1121,25 +1151,18 @@
                         };
                     });
                 }
-                debugLog(`📈 Объединены данные прогресса (checksum: ${progressResult.data.checksum || 'N/A'})`);
             }
             
-            const hasData = habits.length > 0;
-            debugLog(`📊 Итого: ${habits.length} привычек, данные есть: ${hasData}`);
-            debugLog(`📊 Кеш статистики после загрузки: ${JSON.stringify(statisticsCache)}`);
-            
-            return hasData;
+            return habits.length > 0;
         }
 
         // ==================== СТАТИСТИКА ====================
 
         function getCurrentDay() {
-            // Получаем текущий день месяца для сентября 2025
             const currentDate = new Date();
-            // Если сейчас сентябрь 2025, используем текущий день, иначе используем 8 (примерная дата)
             const currentDay = (currentDate.getFullYear() === 2025 && currentDate.getMonth() === 8) 
                 ? currentDate.getDate() 
-                : 8; // Дефолтный день для тестирования
+                : 8;
             
             return Math.min(currentDay, daysInMonth);
         }
@@ -1147,12 +1170,8 @@
         function calculateStatistics() {
             debugLog('📊 Пересчитываем статистику...');
             
-            const currentDay = getCurrentDay();
-            debugLog(`📅 Текущий день: ${currentDay}`);
-            
-            // Считаем статистику
             let totalCompleted = 0;
-            let totalPossible = 0;
+            let totalPossible = habits.length * 30;
             const habitProgress = [];
 
             habits.forEach((habit, habitIndex) => {
@@ -1162,50 +1181,29 @@
                         completed++;
                         totalCompleted++;
                     }
-                    totalPossible++;
                 }
                 const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
-                habitProgress.push(Math.min(progress, 100));
+                habitProgress.push({
+                    completed: completed,
+                    goal: habit.goal,
+                    progress: Math.min(progress, 100)
+                });
             });
 
-            const averageProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
+            const overallProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
             
             // Находим лучшую привычку
-            const bestHabitIndex = habitProgress.indexOf(Math.max(...habitProgress));
+            const bestHabitIndex = habitProgress.findIndex(h => h.progress === Math.max(...habitProgress.map(p => p.progress)));
             const bestHabit = habits[bestHabitIndex];
 
-            // ИСПРАВЛЕННЫЙ подсчет дней подряд с текущего дня назад
-            let currentStreak = 0;
-            for (let day = currentDay; day >= 1; day--) {
-                let dayHasAnyCompletedHabit = false;
-                
-                // Проверяем, есть ли хотя бы одна выполненная привычка в этот день
-                habits.forEach((habit, habitIndex) => {
-                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
-                        dayHasAnyCompletedHabit = true;
-                    }
-                });
-                
-                if (dayHasAnyCompletedHabit) {
-                    currentStreak++;
-                    debugLog(`📅 День ${day}: есть выполненные привычки, серия = ${currentStreak}`);
-                } else {
-                    debugLog(`📅 День ${day}: нет выполненных привычек, прерываем серию на ${currentStreak}`);
-                    break;
-                }
-            }
-
-            // Обновляем кеш статистики
             statisticsCache = {
                 totalCompleted: totalCompleted,
-                averageProgress: averageProgress,
-                bestHabit: bestHabit ? bestHabit.icon : '📊',
-                currentStreak: currentStreak,
-                habitProgress: habitProgress // Кешируем детальную статистику
+                overallProgress: overallProgress,
+                bestHabit: bestHabit ? bestHabit.icon : '📋',
+                habitProgress: habitProgress
             };
             
-            debugLog(`📊 Пересчитанная статистика: ${JSON.stringify(statisticsCache)}`);
-            debugLog(`🔥 Дней подряд: ${currentStreak} (проверили с дня ${currentDay} до 1)`);
+            debugLog(`📊 Статистика: ${totalCompleted} заданий, ${overallProgress}%`);
             
             return statisticsCache;
         }
@@ -1213,27 +1211,54 @@
         function updateStatisticsDisplay() {
             debugLog('📊 Обновляем отображение статистики...');
             
-            // Обновляем отображение статистики
             const totalCompletedEl = document.getElementById('totalCompleted');
-            const averageProgressEl = document.getElementById('averageProgress');
             const bestHabitEl = document.getElementById('bestHabit');
-            const currentStreakEl = document.getElementById('currentStreak');
+            const overallProgressEl = document.getElementById('overallProgress');
+            const progressFillEl = document.getElementById('progressFill');
             
             if (totalCompletedEl) {
                 totalCompletedEl.textContent = statisticsCache.totalCompleted;
-                debugLog(`📊 Показано заданий: ${statisticsCache.totalCompleted}`);
-            }
-            if (averageProgressEl) {
-                averageProgressEl.textContent = statisticsCache.averageProgress + '%';
-                debugLog(`📊 Показан прогресс: ${statisticsCache.averageProgress}%`);
             }
             if (bestHabitEl) {
                 bestHabitEl.textContent = statisticsCache.bestHabit;
             }
-            if (currentStreakEl) {
-                currentStreakEl.textContent = statisticsCache.currentStreak;
-                debugLog(`📊 Показано дней подряд: ${statisticsCache.currentStreak}`);
+            if (overallProgressEl) {
+                overallProgressEl.textContent = statisticsCache.overallProgress + '%';
             }
+            if (progressFillEl) {
+                progressFillEl.style.width = statisticsCache.overallProgress + '%';
+            }
+        }
+
+        function updateVerticalBars() {
+            const container = document.getElementById('verticalBars');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            habits.forEach((habit, index) => {
+                let completed = 0;
+                for (let day = 1; day <= daysInMonth; day++) {
+                    if (habitData[index] && habitData[index][day]) {
+                        completed++;
+                    }
+                }
+                
+                const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
+                const barHeight = Math.min(progress, 100);
+                
+                const barDiv = document.createElement('div');
+                barDiv.className = 'vertical-bar';
+                barDiv.innerHTML = `
+                    <div class="bar-icon">${habit.icon}</div>
+                    <div class="bar-wrapper">
+                        <div class="bar-fill" style="height: ${barHeight}%;"></div>
+                    </div>
+                    <div class="bar-label">${completed}/${habit.goal}</div>
+                `;
+                
+                container.appendChild(barDiv);
+            });
         }
 
         // ==================== АНАЛИЗ ОТ ИИ ====================
@@ -1241,7 +1266,6 @@
         async function requestAIAnalysis() {
             debugLog('🤖 Запрос анализа от ИИ...');
             
-            // Сначала принудительно сохраняем
             await forceSaveProgress();
             
             const analysisData = {
@@ -1258,8 +1282,6 @@
                 analysis_request: 'Проанализируй мой прогресс и дай рекомендации'
             };
 
-            debugLog(`🤖 Отправляем в n8n анализ для ${habits.length} привычек`);
-
             showSaveIndicator(true, '🤖 Запрос к ИИ...');
 
             try {
@@ -1272,8 +1294,6 @@
                     body: JSON.stringify(analysisData)
                 });
 
-                debugLog(`🤖 ИИ анализ статус: ${response.status}`);
-                
                 if (response.ok) {
                     showSaveIndicator(true, '✅ Анализ отправлен ИИ');
                     if (tgApp) {
@@ -1283,7 +1303,6 @@
                     showSaveIndicator(false, '❌ Ошибка запроса к ИИ');
                 }
             } catch (error) {
-                debugLog(`🤖 ИИ анализ ошибка: ${error}`);
                 showSaveIndicator(false, '❌ Ошибка связи с ИИ');
             }
         }
@@ -1291,14 +1310,12 @@
         // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 
         function showSetupWizard() {
-            debugLog('⚙️ Показываем мастер настройки');
             document.getElementById('setupWizard').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
             populateHabitLibrary();
         }
 
         function goBack() {
-            debugLog('⬅️ Закрываем мастер настройки');
             document.getElementById('setupWizard').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
         }
@@ -1323,11 +1340,9 @@
 
         function toggleHabitSelection(index, element) {
             element.classList.toggle('selected');
-            debugLog(`🔄 Привычка ${index} переключена`);
         }
 
         function addCustomHabit() {
-            debugLog('➕ Добавляем кастомную привычку');
             const container = document.getElementById('customHabits');
             const div = document.createElement('div');
             div.className = 'custom-habit';
@@ -1342,10 +1357,8 @@
         }
 
         async function finishSetup() {
-            debugLog('⚙️ Завершаем настройку...');
             habits = [];
             
-            // Добавляем выбранные готовые привычки
             document.querySelectorAll('.habit-option.selected').forEach(option => {
                 const text = option.querySelector('span').textContent;
                 const goal = parseInt(option.querySelector('.goal-slider').value);
@@ -1357,7 +1370,6 @@
                 });
             });
             
-            // Добавляем кастомные привычки
             document.querySelectorAll('.custom-habit-input').forEach(input => {
                 if (input.value.trim()) {
                     const goal = parseInt(input.parentElement.querySelector('.goal-slider').value);
@@ -1369,16 +1381,13 @@
                 }
             });
             
-            // Если ничего не выбрано, добавляем примеры
             if (habits.length === 0) {
                 habits = [
-                    { name: "🏃‍♂️ 10000 шагов", goal: 25, icon: "🏃‍♂️" },
+                    { name: "🏃🏻 10000 шагов", goal: 25, icon: "🏃🏻" },
                     { name: "🥗 Здоровое питание", goal: 25, icon: "🥗" },
                     { name: "📖 Чтение книг", goal: 20, icon: "📖" }
                 ];
             }
-            
-            debugLog(`📋 Выбрано привычек: ${habits.length}`);
             
             await forceSaveProgress();
             goBack();
@@ -1387,22 +1396,18 @@
             createHabitsTable();
             
             setTimeout(() => {
-                initializeCharts();
                 restoreCheckboxes();
-                // ВАЖНО: обновляем статистику после восстановления
                 setTimeout(() => {
                     calculateStatistics();
                     updateStatisticsDisplay();
+                    updateVerticalBars();
                     updateProgress();
                     isInitialized = true;
-                    debugLog('✅ Инициализация завершена');
                 }, 300);
             }, 500);
         }
 
         function initializeHabits() {
-            debugLog('🔧 Инициализируем данные привычек');
-            
             habits.forEach((habit, habitIndex) => {
                 if (!habitData[habitIndex]) {
                     habitData[habitIndex] = {};
@@ -1414,12 +1419,9 @@
                     }
                 }
             });
-            
-            debugLog(`🔧 Инициализированы данные для ${habits.length} привычек`);
         }
 
         function createHabitsTable() {
-            debugLog('📋 Создаем таблицу привычек');
             const tbody = document.getElementById('habitsTable');
             tbody.innerHTML = '';
 
@@ -1434,7 +1436,7 @@
                                value="${habit.name}" 
                                onchange="updateHabitName(${habitIndex}, this.value)"
                                onblur="forceSaveProgress()">
-                        <span class="delete-habit" onclick="deleteHabit(${habitIndex})" title="Удалить привычку">🗑️</span>
+                        <span class="delete-habit" onclick="deleteHabit(${habitIndex})" title="Удалить привычку">🗑</span>
                     </td>
                     <td class="goal-cell">
                         <input type="number" 
@@ -1444,6 +1446,7 @@
                                onchange="updateHabitGoal(${habitIndex}, this.value)"
                                onblur="forceSaveProgress()">
                     </td>
+                    <td class="fact-cell" id="fact-${habitIndex}">0</td>
                 `;
 
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -1464,17 +1467,11 @@
                 row.innerHTML = rowHTML;
                 tbody.appendChild(row);
             });
-            
-            debugLog(`📋 Таблица создана для ${habits.length} привычек`);
         }
 
         function updateHabitName(index, name) {
             habits[index].name = name;
             habits[index].icon = name.split(' ')[0] || '📝';
-            if (habitsChart) {
-                habitsChart.data.labels = habits.map(h => h.icon);
-                habitsChart.update();
-            }
         }
 
         function updateHabitGoal(index, goal) {
@@ -1490,7 +1487,6 @@
             
             habits.splice(index, 1);
             
-            // Пересоздаем habitData
             const newHabitData = {};
             habits.forEach((habit, newIndex) => {
                 newHabitData[newIndex] = habitData[newIndex >= index ? newIndex + 1 : newIndex] || {};
@@ -1508,6 +1504,7 @@
                 setTimeout(() => {
                     calculateStatistics();
                     updateStatisticsDisplay();
+                    updateVerticalBars();
                     updateProgress();
                 }, 200);
                 await forceSaveProgress();
@@ -1515,7 +1512,6 @@
         }
 
         async function addNewHabit() {
-            debugLog('➕ Добавляем новую привычку');
             const newHabit = {
                 name: "📝 Новая привычка",
                 goal: 20,
@@ -1532,128 +1528,17 @@
             
             createHabitsTable();
             setTimeout(async () => {
-                if (habitsChart) {
-                    habitsChart.data.labels = habits.map(h => h.icon);
-                    habitsChart.data.datasets[0].data = habits.map(() => 0);
-                    habitsChart.update();
-                }
+                updateVerticalBars();
                 await forceSaveProgress();
             }, 100);
         }
 
-        function initializeCharts() {
-            debugLog('📊 Инициализируем диаграммы...');
-            
-            if (typeof Chart === 'undefined') {
-                debugLog('❌ Chart.js не загружен');
-                return;
-            }
-
-            try {
-                // Progress Overview Chart
-                const progressCtx = document.getElementById('progressChart').getContext('2d');
-                if (progressChart) {
-                    progressChart.destroy();
-                }
-                
-                progressChart = new Chart(progressCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Выполнено', 'Осталось'],
-                        datasets: [{
-                            data: [statisticsCache.averageProgress || 0, 100 - (statisticsCache.averageProgress || 0)],
-                            backgroundColor: ['#20b2aa', '#e2e8f0'],
-                            borderWidth: 3,
-                            borderColor: '#ffffff',
-                            cutout: '75%'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    usePointStyle: true,
-                                    font: { size: 12 },
-                                    color: '#1e293b'
-                                }
-                            }
-                        }
-                    }
-                });
-                debugLog('✅ Круговая диаграмма создана');
-
-                // Habits Progress Chart
-                const habitsCtx = document.getElementById('habitsChart').getContext('2d');
-                if (habitsChart) {
-                    habitsChart.destroy();
-                }
-                
-                habitsChart = new Chart(habitsCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: habits.map(h => h.icon),
-                        datasets: [{
-                            label: 'Прогресс (%)',
-                            data: statisticsCache.habitProgress || habits.map(() => 0),
-                            backgroundColor: '#20b2aa',
-                            borderColor: '#1e90ff',
-                            borderWidth: 2,
-                            borderRadius: 6,
-                            borderSkipped: false,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: {
-                                    callback: function(value) { return value + '%'; },
-                                    font: { size: 10 },
-                                    color: '#64748b'
-                                },
-                                grid: {
-                                    color: '#e2e8f0'
-                                }
-                            },
-                            x: { 
-                                ticks: { 
-                                    font: { size: 14 },
-                                    color: '#1e293b'
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        },
-                        plugins: { 
-                            legend: { display: false }
-                        }
-                    }
-                });
-                debugLog('✅ Гистограмма создана');
-                
-            } catch (error) {
-                debugLog(`❌ Ошибка создания диаграмм: ${error}`);
-            }
-        }
-
         function updateProgress() {
-            if (!isInitialized) {
-                debugLog('❌ Приложение не инициализировано, пропускаем updateProgress');
-                return;
-            }
+            if (!isInitialized) return;
             
-            debugLog('📊 Обновляем прогресс и статистику...');
-            
-            // Обновляем данные из чекбоксов
             let checkedCount = 0;
+            const factCounts = {};
+            
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const habitIndex = parseInt(checkbox.dataset.habit);
                 const day = parseInt(checkbox.dataset.day);
@@ -1662,13 +1547,30 @@
                     habitData[habitIndex][day] = checkbox.checked;
                     if (checkbox.checked) {
                         checkedCount++;
+                        factCounts[habitIndex] = (factCounts[habitIndex] || 0) + 1;
                     }
                 }
             });
-            
-            debugLog(`📊 Обновлен прогресс: ${checkedCount} галочек`);
 
-            // Автосохранение через 2 секунды после изменений
+            // Обновляем столбец "Факт"
+            Object.keys(factCounts).forEach(habitIndex => {
+                const factEl = document.getElementById(`fact-${habitIndex}`);
+                if (factEl) {
+                    factEl.textContent = factCounts[habitIndex] || 0;
+                }
+            });
+
+            // Обновляем привычки без галочек
+            habits.forEach((habit, index) => {
+                if (!factCounts[index]) {
+                    const factEl = document.getElementById(`fact-${index}`);
+                    if (factEl) {
+                        factEl.textContent = '0';
+                    }
+                }
+            });
+
+            // Автосохранение
             if (window.autoSaveTimeout) {
                 clearTimeout(window.autoSaveTimeout);
             }
@@ -1676,34 +1578,12 @@
                 forceSaveProgress();
             }, 2000);
 
-            // Пересчитываем статистику
             const stats = calculateStatistics();
             updateStatisticsDisplay();
-
-            // Обновляем диаграммы
-            if (progressChart) {
-                try {
-                    progressChart.data.datasets[0].data = [stats.averageProgress, 100 - stats.averageProgress];
-                    progressChart.update();
-                    debugLog(`📊 Круговая диаграмма обновлена: ${stats.averageProgress}%`);
-                } catch (error) {
-                    debugLog(`❌ Ошибка обновления круговой диаграммы: ${error}`);
-                }
-            }
-
-            if (habitsChart) {
-                try {
-                    habitsChart.data.datasets[0].data = stats.habitProgress;
-                    habitsChart.update();
-                    debugLog(`📊 Гистограмма обновлена для ${stats.habitProgress.length} привычек: ${stats.habitProgress}`);
-                } catch (error) {
-                    debugLog(`❌ Ошибка обновления гистограммы: ${error}`);
-                }
-            }
+            updateVerticalBars();
         }
 
         function restoreCheckboxes() {
-            debugLog('🔄 Восстанавливаем галочки...');
             let restoredCount = 0;
             
             setTimeout(() => {
@@ -1717,32 +1597,15 @@
                     }
                 });
                 
-                debugLog(`✅ Восстановлено ${restoredCount} галочек`);
-                
                 if (restoredCount > 0) {
                     showSaveIndicator(true, `✅ Восстановлено ${restoredCount} галочек`);
                     
-                    // ВАЖНО: пересчитываем и отображаем статистику
                     setTimeout(() => {
-                        debugLog('🔄 Принудительный пересчет статистики после восстановления галочек');
                         calculateStatistics();
                         updateStatisticsDisplay();
-                        
-                        // Обновляем диаграммы с кешированными данными
-                        if (progressChart && statisticsCache.averageProgress) {
-                            progressChart.data.datasets[0].data = [statisticsCache.averageProgress, 100 - statisticsCache.averageProgress];
-                            progressChart.update();
-                            debugLog(`📊 Круговая диаграмма восстановлена: ${statisticsCache.averageProgress}%`);
-                        }
-                        
-                        if (habitsChart && statisticsCache.habitProgress) {
-                            habitsChart.data.datasets[0].data = statisticsCache.habitProgress;
-                            habitsChart.update();
-                            debugLog(`📊 Гистограмма восстановлена: ${statisticsCache.habitProgress}`);
-                        }
+                        updateVerticalBars();
+                        updateProgress();
                     }, 100);
-                } else {
-                    debugLog(`ℹ️ Галочки не найдены для восстановления`);
                 }
             }, 200);
         }
@@ -1750,14 +1613,21 @@
         // ==================== УТИЛИТЫ ====================
 
         function exportCSV() {
-            let csv = 'Привычка,Цель';
+            let csv = 'Привычка,Цель,Факт';
             for (let day = 1; day <= daysInMonth; day++) {
                 csv += ',День ' + day;
             }
             csv += '\n';
 
             habits.forEach((habit, habitIndex) => {
-                csv += `"${habit.name}",${habit.goal}`;
+                let completed = 0;
+                for (let day = 1; day <= daysInMonth; day++) {
+                    if (habitData[habitIndex] && habitData[habitIndex][day]) {
+                        completed++;
+                    }
+                }
+                
+                csv += `"${habit.name}",${habit.goal},${completed}`;
                 for (let day = 1; day <= daysInMonth; day++) {
                     csv += ',' + ((habitData[habitIndex] && habitData[habitIndex][day]) ? '1' : '0');
                 }
@@ -1778,45 +1648,32 @@
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 
         async function initializeApp() {
-            debugLog('=== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ===');
-            
             const hasData = await loadAllData();
             
             if (hasData) {
-                debugLog(`✅ Найдены сохраненные данные: ${habits.length} привычек`);
-                debugLog(`📊 Загруженная статистика: ${JSON.stringify(statisticsCache)}`);
-                
                 initializeHabits();
                 createHabitsTable();
                 
-                // Сначала отображаем загруженную статистику
                 updateStatisticsDisplay();
                 
                 setTimeout(() => {
-                    initializeCharts();
                     restoreCheckboxes();
-                    // Даем время на восстановление галочек, затем финализируем
                     setTimeout(() => {
                         calculateStatistics();
                         updateStatisticsDisplay();
+                        updateVerticalBars();
                         updateProgress();
                         isInitialized = true;
-                        debugLog('✅ Приложение полностью инициализировано со статистикой');
                     }, 500);
                 }, 500);
                 
             } else {
-                debugLog('ℹ️ Сохраненные данные не найдены, показываем мастер');
                 showSetupWizard();
             }
         }
 
-        // Запуск приложения
         document.addEventListener('DOMContentLoaded', function() {
-            debugLog('🚀 DOM загружен');
-            
             setTimeout(() => {
-                debugLog('🚀 Запускаем инициализацию приложения');
                 initializeApp();
             }, 500);
         });
