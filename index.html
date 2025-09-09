@@ -39,58 +39,76 @@
             background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
             padding: 20px;
             color: #ffffff;
+            text-align: center;
             position: relative;
         }
 
-        .header-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .header-logo {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMzJMMjggMTJMMzIgMTZMMzUgMTNMMzAgOEwyNiAxMkw2IDMySDhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhMMjAgMjBMMjQgMjRMMjggMjBMMjQgMTZMMTYgMjRMOCAzMkgxMloiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjMwIiBjeT0iMTAiIHI9IjQiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==');
-            background-size: 24px 24px;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .header-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            flex: 1;
-        }
-
         .welcome-text {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .subtitle-text {
-            font-size: 13px;
+            font-size: 14px;
             opacity: 0.9;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
 
         .month-selector {
             display: inline-block;
             background: rgba(255,255,255,0.25);
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-size: 14px;
             backdrop-filter: blur(10px);
-            align-self: flex-end;
-            margin-top: auto;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .month-selector:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-1px);
+        }
+
+        .month-dropdown {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 8px;
+            z-index: 100;
+            display: none;
+            min-width: 200px;
+        }
+
+        .month-dropdown.show {
+            display: block;
+        }
+
+        .month-option {
+            padding: 10px 12px;
+            color: #1e293b;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .month-option:hover {
+            background: #f1f5f9;
+        }
+
+        .month-option.current {
+            background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
+            color: white;
         }
 
         .stats-bar {
@@ -445,6 +463,7 @@
             text-align: center;
             margin-bottom: 24px;
             position: relative;
+            padding-left: 60px;
         }
 
         .back-button {
@@ -554,6 +573,7 @@
             font-size: 20px;
             min-width: 40px;
             text-align: center;
+            position: relative;
         }
 
         .emoji-picker:hover {
@@ -562,7 +582,7 @@
 
         .emoji-list {
             display: none;
-            position: absolute;
+            position: fixed;
             background: white;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -572,8 +592,6 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             max-width: 240px;
-            top: 50px;
-            left: 0;
         }
 
         .emoji-list.show {
@@ -644,15 +662,6 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
                 padding: 12px;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .header-logo {
-                align-self: flex-start;
             }
             
             .main-content {
@@ -759,12 +768,12 @@
     <div class="container" id="mainApp">
         <!-- Header -->
         <div class="header">
-            <div class="header-content">
-                <div class="header-logo"></div>
-                <div class="header-text">
-                    <div class="welcome-text" id="welcomeText">Добро пожаловать, Пользователь</div>
-                    <div class="subtitle-text">Начни управлять своим временем</div>
-                    <div class="month-selector">Сентябрь 2025</div>
+            <div class="welcome-text" id="welcomeText">Добро пожаловать, Пользователь</div>
+            <div class="subtitle-text">Начни управлять своим временем</div>
+            <div class="month-selector" onclick="toggleMonthDropdown()">
+                <span id="currentMonth">Сентябрь 2025</span>
+                <div class="month-dropdown" id="monthDropdown">
+                    <!-- Будет заполнено JS -->
                 </div>
             </div>
         </div>
@@ -850,6 +859,16 @@
         const daysInMonth = 30;
         let isInitialized = false;
         let currentEmojiPicker = null;
+        let currentMonth = 'september';
+        let currentYear = 2025;
+
+        // Доступные месяцы для переключения
+        const availableMonths = [
+            { key: 'september', name: 'Сентябрь 2025', year: 2025 },
+            { key: 'october', name: 'Октябрь 2025', year: 2025 },
+            { key: 'november', name: 'Ноябрь 2025', year: 2025 },
+            { key: 'december', name: 'Декабрь 2025', year: 2025 }
+        ];
 
         // Статистические кеши для принудительного обновления
         let statisticsCache = {
@@ -913,6 +932,96 @@
             '🔥', '⚡', '🌈', '🎉', '🎁', '🏆', '🥇', '💎', '🌸', '🌺',
             '🗣️', '🎤', '🎼', '🎸', '📢', '🔊', '📻', '🎙️', '🎚️', '🎛️'
         ];
+
+        // ==================== УПРАВЛЕНИЕ МЕСЯЦАМИ ====================
+
+        function populateMonthDropdown() {
+            const dropdown = document.getElementById('monthDropdown');
+            dropdown.innerHTML = '';
+            
+            availableMonths.forEach(month => {
+                const option = document.createElement('div');
+                option.className = 'month-option';
+                if (month.key === currentMonth) {
+                    option.classList.add('current');
+                }
+                
+                option.innerHTML = `
+                    <span>${month.name}</span>
+                    ${month.key !== currentMonth ? '<span>📊</span>' : '<span>✓</span>'}
+                `;
+                
+                option.onclick = () => switchMonth(month.key, month.name, month.year);
+                dropdown.appendChild(option);
+            });
+        }
+
+        function toggleMonthDropdown() {
+            const dropdown = document.getElementById('monthDropdown');
+            if (!dropdown.hasChildNodes()) {
+                populateMonthDropdown();
+            }
+            dropdown.classList.toggle('show');
+        }
+
+        async function switchMonth(monthKey, monthName, year) {
+            // Сохраняем текущий месяц перед переключением
+            await forceSaveProgress();
+            
+            // Переключаемся на новый месяц
+            currentMonth = monthKey;
+            currentYear = year;
+            
+            document.getElementById('currentMonth').textContent = monthName;
+            document.getElementById('monthDropdown').classList.remove('show');
+            
+            // Загружаем данные для нового месяца
+            await loadMonthData(monthKey, year);
+            
+            // Обновляем интерфейс
+            createHabitsTable();
+            setTimeout(() => {
+                restoreCheckboxes();
+                setTimeout(() => {
+                    calculateStatistics();
+                    updateStatisticsDisplay();
+                    updateVerticalBars();
+                    updateProgress();
+                }, 200);
+            }, 300);
+            
+            showSaveIndicator(true, `📅 Переключено на ${monthName}`);
+        }
+
+        async function loadMonthData(month, year) {
+            const monthKey = `${month}_${year}`;
+            const result = await loadDataReliably(`user_settings_${monthKey}`);
+            
+            if (result.data && result.data.habits) {
+                // Сохраняем список привычек (должен быть тот же)
+                if (result.data.habitData) {
+                    habitData = result.data.habitData;
+                }
+            } else {
+                // Если данных для месяца нет, создаем пустые данные с теми же привычками
+                habitData = {};
+                habits.forEach((habit, index) => {
+                    habitData[index] = {};
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        habitData[index][day] = false;
+                    }
+                });
+            }
+        }
+
+        // Закрываем dropdown при клике вне его
+        document.addEventListener('click', function(e) {
+            const monthSelector = document.querySelector('.month-selector');
+            const monthDropdown = document.getElementById('monthDropdown');
+            if (!monthSelector.contains(e.target) && monthDropdown) {
+                monthDropdown.classList.remove('show');
+            }
+        });
 
         // ==================== ФУНКЦИИ СЖАТИЯ ДАННЫХ ====================
 
@@ -983,6 +1092,8 @@
         async function saveDataReliably(key, data) {
             let saveData = { ...data };
             saveData.statisticsCache = statisticsCache;
+            saveData.month = currentMonth;
+            saveData.year = currentYear;
             
             if (data.habitData) {
                 saveData = {
@@ -990,7 +1101,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '13.0-final-version'
+                    version: '14.0-month-system'
                 };
             }
             
@@ -1118,26 +1229,29 @@
 
             calculateStatistics();
 
+            const monthKey = `${currentMonth}_${currentYear}`;
             const progressData = {
                 habitData: habitData,
                 lastSaved: new Date().toISOString(),
                 habits: habits,
                 checksum: checkedCount,
-                statisticsCache: statisticsCache
+                statisticsCache: statisticsCache,
+                month: currentMonth,
+                year: currentYear
             };
             
             const settingsData = {
                 habits: habits,
                 habitData: habitData,
-                month: 'september',
-                year: 2025,
+                month: currentMonth,
+                year: currentYear,
                 checksum: checkedCount,
                 statisticsCache: statisticsCache
             };
             
             const [progressResult, settingsResult] = await Promise.all([
-                saveDataReliably('habit_progress', progressData),
-                saveDataReliably('user_settings', settingsData)
+                saveDataReliably(`habit_progress_${monthKey}`, progressData),
+                saveDataReliably(`user_settings_${monthKey}`, settingsData)
             ]);
             
             if (progressResult.success && settingsResult.success) {
@@ -1146,9 +1260,10 @@
         }
 
         async function loadAllData() {
+            const monthKey = `${currentMonth}_${currentYear}`;
             const [settingsResult, progressResult] = await Promise.all([
-                loadDataReliably('user_settings'),
-                loadDataReliably('habit_progress')
+                loadDataReliably(`user_settings_${monthKey}`),
+                loadDataReliably(`habit_progress_${monthKey}`)
             ]);
             
             if (settingsResult.data) {
@@ -1289,7 +1404,10 @@
                 });
             }
             
-            // Показываем
+            // Позиционируем относительно кнопки
+            const rect = pickerElement.getBoundingClientRect();
+            emojiList.style.left = rect.left + 'px';
+            emojiList.style.top = (rect.bottom + 5) + 'px';
             emojiList.classList.add('show');
         }
 
@@ -1321,8 +1439,8 @@
                 date: new Date().toISOString().split('T')[0],
                 habits_data: habitData,
                 habits_info: habits,
-                month: 'september',
-                year: 2025,
+                month: currentMonth,
+                year: currentYear,
                 request_type: 'ai_analysis',
                 analysis_request: 'Проанализируй мой прогресс и дай рекомендации'
             };
@@ -1330,7 +1448,7 @@
             showSaveIndicator(true, '🤖 Запрос к ИИ...');
 
             try {
-                const response = await fetch('https://n8n.meemugicopem.ru/webhook/habits-tracker', {
+                const response = await fetch('https://n8n.meemugicopem.ru/webhook-test/habits-tracker', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
