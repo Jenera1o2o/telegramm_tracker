@@ -39,40 +39,45 @@
             background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%);
             padding: 20px;
             color: #ffffff;
-            text-align: center;
             position: relative;
         }
 
-        .header-top {
+        .header-content {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
+            align-items: flex-start;
+            gap: 12px;
         }
 
         .header-logo {
             width: 40px;
             height: 40px;
-            margin-right: 12px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik0xNCAySDEwdjEwaDR2LTJ6bTYgMGgtNHYxMGg0di0yem0tMTIgMEgydjEwaDR2LTJ6bTEyIDEySDJ2Mmg4djJoNHYtMmg4di0yeiIvPgo8cGF0aCBmaWxsPSIjMjBiMmFhIiBkPSJNOS4yIDEyLjhjMS4yIDIuNCAxLjggNCAyIDZoMmMtLjItMi0uOC0zLjYtMi02eiIvPgo8L3N2Zz4=');
+            flex-shrink: 0;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMzJMMjggMTJMMzIgMTZMMzUgMTNMMzAgOEwyNiAxMkw2IDMySDhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhMMjAgMjBMMjQgMjRMMjggMjBMMjQgMTZMMTYgMjRMOCAzMkgxMloiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjMwIiBjeT0iMTAiIHI9IjQiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==');
             background-size: 24px 24px;
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        .header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
         }
 
         .welcome-text {
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .subtitle-text {
+            font-size: 13px;
             opacity: 0.9;
             margin-bottom: 8px;
         }
@@ -84,6 +89,8 @@
             border-radius: 20px;
             font-size: 14px;
             backdrop-filter: blur(10px);
+            align-self: flex-end;
+            margin-top: auto;
         }
 
         .stats-bar {
@@ -274,12 +281,6 @@
         .goal-input:focus {
             background: #f1f5f9;
             border-radius: 4px;
-        }
-
-        .fact-cell {
-            font-weight: bold;
-            color: #20b2aa;
-            font-size: 13px;
         }
 
         .day-checkbox {
@@ -526,6 +527,7 @@
             gap: 12px;
             margin-bottom: 12px;
             align-items: center;
+            position: relative;
         }
 
         .custom-habit input {
@@ -570,6 +572,8 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             max-width: 240px;
+            top: 50px;
+            left: 0;
         }
 
         .emoji-list.show {
@@ -642,8 +646,13 @@
                 padding: 12px;
             }
             
-            .header h1 {
-                font-size: 20px;
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-logo {
+                align-self: flex-start;
             }
             
             .main-content {
@@ -750,12 +759,14 @@
     <div class="container" id="mainApp">
         <!-- Header -->
         <div class="header">
-            <div class="header-top">
+            <div class="header-content">
                 <div class="header-logo"></div>
-                <h1>Прорыв</h1>
+                <div class="header-text">
+                    <div class="welcome-text" id="welcomeText">Добро пожаловать, Пользователь</div>
+                    <div class="subtitle-text">Начни управлять своим временем</div>
+                    <div class="month-selector">Сентябрь 2025</div>
+                </div>
             </div>
-            <div class="welcome-text" id="welcomeText">Добро пожаловать, Пользователь</div>
-            <div class="month-selector">Сентябрь 2025</div>
         </div>
 
         <!-- Statistics Bar -->
@@ -792,7 +803,6 @@
                         <tr>
                             <th>Привычки</th>
                             <th>Цель</th>
-                            <th>Факт</th>
                             <!-- Week 1 -->
                             <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
                             <!-- Week 2 -->
@@ -864,9 +874,9 @@
 
         // Расширенная библиотека готовых привычек
         const habitLibrary = [
-            { name: "🏃🏻 Утренняя пробежка", defaultGoal: 20 },
+            { name: "🏃🏻 Пробежка", defaultGoal: 20 },
             { name: "🧘🏻 Медитация", defaultGoal: 30 },
-            { name: "🏋🏻 Спортзал", defaultGoal: 15 },
+            { name: "🏋🏻 Тренировка", defaultGoal: 15 },
             { name: "💧 Пить 2л воды", defaultGoal: 30 },
             { name: "🚶🏻 10000 шагов", defaultGoal: 25 },
             { name: "📖 Чтение книг", defaultGoal: 20 },
@@ -888,7 +898,9 @@
             { name: "📝 Планирование", defaultGoal: 30 },
             { name: "🎵 Музыка", defaultGoal: 20 },
             { name: "🚫 Отказ от сладкого", defaultGoal: 25 },
-            { name: "☕ Меньше кофе", defaultGoal: 20 }
+            { name: "☕ Меньше кофе", defaultGoal: 20 },
+            { name: "🗣️ Развитие дикции", defaultGoal: 20 },
+            { name: "🎤 Вокал", defaultGoal: 15 }
         ];
 
         // Эмодзи для выбора
@@ -898,7 +910,8 @@
             '🎨', '🌱', '🎵', '🚫', '☕', '🍎', '🥗', '🍊', '🥛', '🧴',
             '💊', '🚴🏻', '🏊🏻', '⚽', '🎾', '🏀', '🏓', '🎳', '🎯', '🎪',
             '📚', '✏', '🖊', '📄', '💡', '🔬', '🌟', '❤️', '💚', '💙',
-            '🔥', '⚡', '🌈', '🎉', '🎁', '🏆', '🥇', '💎', '🌸', '🌺'
+            '🔥', '⚡', '🌈', '🎉', '🎁', '🏆', '🥇', '💎', '🌸', '🌺',
+            '🗣️', '🎤', '🎼', '🎸', '📢', '🔊', '📻', '🎙️', '🎚️', '🎛️'
         ];
 
         // ==================== ФУНКЦИИ СЖАТИЯ ДАННЫХ ====================
@@ -977,7 +990,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '12.0-final-ui'
+                    version: '13.0-final-version'
                 };
             }
             
@@ -1166,7 +1179,7 @@
 
         function calculateStatistics() {
             let totalCompleted = 0;
-            let totalPossible = habits.length * 30;
+            let totalGoals = 0;
             const habitProgress = [];
 
             habits.forEach((habit, habitIndex) => {
@@ -1177,6 +1190,7 @@
                         totalCompleted++;
                     }
                 }
+                totalGoals += habit.goal;
                 const progress = habit.goal > 0 ? (completed / habit.goal) * 100 : 0;
                 habitProgress.push({
                     completed: completed,
@@ -1185,7 +1199,7 @@
                 });
             });
 
-            const overallProgress = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
+            const overallProgress = totalGoals > 0 ? Math.round((totalCompleted / totalGoals) * 100) : 0;
             
             // Находим лучшую привычку
             const bestHabitIndex = habitProgress.findIndex(h => h.progress === Math.max(...habitProgress.map(p => p.progress)));
@@ -1275,11 +1289,7 @@
                 });
             }
             
-            // Позиционируем и показываем
-            const rect = pickerElement.getBoundingClientRect();
-            emojiList.style.position = 'absolute';
-            emojiList.style.top = (rect.bottom + 5) + 'px';
-            emojiList.style.left = rect.left + 'px';
+            // Показываем
             emojiList.classList.add('show');
         }
 
@@ -1505,7 +1515,6 @@
                                onchange="updateHabitGoal(${habitIndex}, this.value)"
                                onblur="forceSaveProgress()">
                     </td>
-                    <td class="fact-cell" id="fact-${habitIndex}">0</td>
                 `;
 
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -1578,7 +1587,6 @@
             if (!isInitialized) return;
             
             let checkedCount = 0;
-            const factCounts = {};
             
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const habitIndex = parseInt(checkbox.dataset.habit);
@@ -1588,25 +1596,6 @@
                     habitData[habitIndex][day] = checkbox.checked;
                     if (checkbox.checked) {
                         checkedCount++;
-                        factCounts[habitIndex] = (factCounts[habitIndex] || 0) + 1;
-                    }
-                }
-            });
-
-            // Обновляем столбец "Факт"
-            Object.keys(factCounts).forEach(habitIndex => {
-                const factEl = document.getElementById(`fact-${habitIndex}`);
-                if (factEl) {
-                    factEl.textContent = factCounts[habitIndex] || 0;
-                }
-            });
-
-            // Обновляем привычки без галочек
-            habits.forEach((habit, index) => {
-                if (!factCounts[index]) {
-                    const factEl = document.getElementById(`fact-${index}`);
-                    if (factEl) {
-                        factEl.textContent = '0';
                     }
                 }
             });
