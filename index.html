@@ -487,11 +487,6 @@
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #20b2aa20 0%, #1e90ff20 100%);
-            border-color: #20b2aa;
-        }
-
-        .habit-option.existing {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border-color: #10b981;
@@ -1127,7 +1122,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '16.0-fixed-system'
+                    version: '17.0-ai-statistics-system'
                 };
             }
             
@@ -1595,18 +1590,64 @@
         async function requestAIAnalysis() {
             await forceSaveProgress();
             
+            // Рассчитываем детальную статистику для каждой привычки
+            const detailedStatistics = [];
+            habits.forEach((habit, habitIndex) => {
+                let completed = 0;
+                let planned = 0;
+                let totalGoal = 0;
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const state = habitData[habitIndex] && habitData[habitIndex][day] ? habitData[habitIndex][day] : 0;
+                    if (state === 1) {
+                        planned++;
+                        totalGoal++;
+                    } else if (state === 2) {
+                        completed++;
+                        totalGoal++;
+                    }
+                }
+                
+                const progress = totalGoal > 0 ? Math.round((completed / totalGoal) * 100) : 0;
+                
+                detailedStatistics.push({
+                    habit_name: habit.name,
+                    habit_icon: habit.icon,
+                    planned_days: planned,
+                    completed_days: completed,
+                    total_goal: totalGoal,
+                    progress_percent: progress,
+                    habit_index: habitIndex
+                });
+            });
+            
             const analysisData = {
                 user_id: tgApp?.initDataUnsafe?.user?.id || 'test_user',
                 user_name: tgApp?.initDataUnsafe?.user?.first_name || 'Пользователь',
                 username: tgApp?.initDataUnsafe?.user?.username || null,
                 timestamp: new Date().toISOString(),
                 date: new Date().toISOString().split('T')[0],
+                
+                // Основные данные
                 habits_data: habitData,
                 habits_info: habits,
+                
+                // Детальная статистика для ИИ
+                detailed_statistics: detailedStatistics,
+                
+                // Общая статистика
+                overall_statistics: {
+                    total_habits: habits.length,
+                    total_completed: statisticsCache.totalCompleted,
+                    total_planned: statisticsCache.totalPlanned,
+                    overall_progress: statisticsCache.overallProgress,
+                    best_habit: statisticsCache.bestHabit
+                },
+                
                 month: currentMonth,
                 year: currentYear,
                 request_type: 'ai_analysis',
-                analysis_request: 'Проанализируй мой прогресс и дай рекомендации'
+                analysis_request: 'Проанализируй мой прогресс и дай рекомендации на основе детальной статистики'
             };
 
             showSaveIndicator(true, '🤖 Запрос к ИИ...');
@@ -1662,7 +1703,7 @@
                 const isExisting = existingHabitNames.includes(habit.name);
                 if (isExisting) {
                     div.classList.add('selected');
-                    div.innerHTML = `<span>${habit.name}</span>`;
+                    div.innerHTML = `<span>${habit.name} / Добавлено ✅</span>`;
                     div.onclick = () => toggleHabitSelection(index, div, habit);
                 } else {
                     div.innerHTML = `<span>${habit.name}</span>`;
@@ -1677,6 +1718,7 @@
             if (element.classList.contains('selected')) {
                 // Убираем привычку
                 element.classList.remove('selected');
+                element.innerHTML = `<span>${habit.name}</span>`;
                 
                 // Удаляем из массива habits
                 const habitIndex = habits.findIndex(h => h.name === habit.name);
@@ -1699,6 +1741,7 @@
             } else {
                 // Добавляем привычку
                 element.classList.add('selected');
+                element.innerHTML = `<span>${habit.name} / Добавлено ✅</span>`;
                 
                 const newHabit = {
                     name: habit.name,
