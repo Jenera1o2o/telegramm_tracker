@@ -168,14 +168,15 @@
         }
 
         .tracker-table {
-            width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
             font-size: 13px;
             box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
             border: 1px solid #e2e8f0;
+            position: relative;
         }
 
         .tracker-table th {
@@ -186,21 +187,33 @@
             text-align: center;
             font-size: 12px;
             border-bottom: 2px solid #e2e8f0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            white-space: nowrap;
         }
 
-        .tracker-table th:first-child,
-        .tracker-table th:nth-child(2) {
+        .tracker-table th.sticky-habits {
             position: sticky;
             left: 0;
-            z-index: 11;
+            z-index: 12;
+            width: 180px;
+            min-width: 180px;
             background: #f8fafc;
+            border-right: 2px solid #20b2aa;
         }
 
-        .tracker-table th:nth-child(2) {
-            left: 160px; /* Ширина первого столбца */
+        .tracker-table th.sticky-goal {
+            position: sticky;
+            left: 180px;
+            z-index: 12;
+            width: 60px;
+            min-width: 60px;
+            background: #f8fafc;
+            border-right: 2px solid #20b2aa;
+        }
+
+        .tracker-table th.today-header {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            font-weight: 700;
         }
 
         .tracker-table td {
@@ -208,31 +221,39 @@
             text-align: center;
             border-bottom: 1px solid #f1f5f9;
             background: #ffffff;
+            white-space: nowrap;
         }
 
-        .tracker-table td:first-child,
-        .tracker-table td:nth-child(2) {
+        .tracker-table td.sticky-habits {
             position: sticky;
-            background: #ffffff;
-            z-index: 9;
-        }
-
-        .tracker-table td:first-child {
             left: 0;
-            border-right: 1px solid #e2e8f0;
+            z-index: 11;
+            width: 180px;
+            min-width: 180px;
+            background: #ffffff;
+            border-right: 2px solid #20b2aa;
         }
 
-        .tracker-table td:nth-child(2) {
-            left: 160px;
-            border-right: 1px solid #e2e8f0;
+        .tracker-table td.sticky-goal {
+            position: sticky;
+            left: 180px;
+            z-index: 11;
+            width: 60px;
+            min-width: 60px;
+            background: #ffffff;
+            border-right: 2px solid #20b2aa;
+        }
+
+        .tracker-table td.today-column {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
         }
 
         .habit-row:hover {
             background-color: #f8fafc;
         }
 
-        .habit-row:hover td:first-child,
-        .habit-row:hover td:nth-child(2) {
+        .habit-row:hover td.sticky-habits,
+        .habit-row:hover td.sticky-goal {
             background-color: #f8fafc;
         }
 
@@ -240,8 +261,6 @@
             text-align: left !important;
             font-weight: 500;
             padding-left: 12px !important;
-            width: 160px;
-            min-width: 160px;
             font-size: 12px;
             position: relative;
             color: #1e293b;
@@ -308,7 +327,12 @@
             color: white;
         }
 
-        .tri-state-checkbox:hover {
+        .tri-state-checkbox.future-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .tri-state-checkbox:hover:not(.future-disabled) {
             transform: scale(1.1);
         }
 
@@ -524,9 +548,9 @@
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-            border-color: #059669;
+            background: rgba(16, 185, 129, 0.08);
+            color: #065f46;
+            border-color: rgba(16, 185, 129, 0.3);
         }
 
         .custom-habit {
@@ -640,6 +664,31 @@
 
         .emoji-option:hover {
             background: #f1f5f9;
+        }
+
+        /* Современная кнопка сохранения */
+        .modern-save-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .modern-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .modern-save-btn:active {
+            transform: translateY(-1px);
         }
 
         /* История */
@@ -853,14 +902,20 @@
             }
 
             .habit-name {
-                width: 120px;
-                min-width: 120px;
                 font-size: 11px;
             }
 
-            .tracker-table th:nth-child(2),
-            .tracker-table td:nth-child(2) {
-                left: 120px;
+            .tracker-table th.sticky-habits,
+            .tracker-table td.sticky-habits {
+                width: 140px;
+                min-width: 140px;
+            }
+
+            .tracker-table th.sticky-goal,
+            .tracker-table td.sticky-goal {
+                left: 140px;
+                width: 50px;
+                min-width: 50px;
             }
 
             .controls {
@@ -888,14 +943,20 @@
             }
             
             .habit-name {
-                width: 100px;
-                min-width: 100px;
                 font-size: 10px;
             }
 
-            .tracker-table th:nth-child(2),
-            .tracker-table td:nth-child(2) {
-                left: 100px;
+            .tracker-table th.sticky-habits,
+            .tracker-table td.sticky-habits {
+                width: 120px;
+                min-width: 120px;
+            }
+
+            .tracker-table th.sticky-goal,
+            .tracker-table td.sticky-goal {
+                left: 120px;
+                width: 40px;
+                min-width: 40px;
             }
 
             .tri-state-checkbox {
@@ -949,8 +1010,8 @@
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <button onclick="finishSetup()" class="btn btn-secondary" style="padding: 12px 30px; font-size: 16px; background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%); color: white;">
-                ✅ Сохранить изменения
+            <button onclick="finishSetup()" class="modern-save-btn">
+                ✨ Применить настройки
             </button>
         </div>
     </div>
@@ -1009,21 +1070,12 @@
         <div class="main-content">
             <!-- Tracker Table -->
             <div class="tracker-section">
-                <table class="tracker-table">
+                <table class="tracker-table" id="trackerTable">
                     <thead>
-                        <tr>
-                            <th>Привычки</th>
-                            <th>Цель</th>
-                            <!-- Week 1 -->
-                            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
-                            <!-- Week 2 -->
-                            <th class="week-separator">8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th>
-                            <!-- Week 3 -->
-                            <th class="week-separator">15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th><th>21</th>
-                            <!-- Week 4 -->
-                            <th class="week-separator">22</th><th>23</th><th>24</th><th>25</th><th>26</th><th>27</th><th>28</th>
-                            <!-- Week 5 -->
-                            <th class="week-separator">29</th><th>30</th>
+                        <tr id="tableHeader">
+                            <th class="sticky-habits">Привычки</th>
+                            <th class="sticky-goal">Цель</th>
+                            <!-- Дни будут сгенерированы JS -->
                         </tr>
                     </thead>
                     <tbody id="habitsTable">
@@ -1065,19 +1117,28 @@
         let habits = [];
         let habitData = {};
         let historyData = {};
-        const daysInMonth = 30;
+        let daysInMonth = 30; // будет динамически определяться
         let isInitialized = false;
         let currentEmojiPicker = null;
         let currentMonth = 'september';
         let currentYear = 2025;
         let habitToDelete = -1;
+        let todayDate = null;
 
         // Автоматические месяцы
         const monthNames = {
-            'september': { name: 'Сентябрь 2025', order: 9 },
-            'october': { name: 'Октябрь 2025', order: 10 },
-            'november': { name: 'Ноябрь 2025', order: 11 },
-            'december': { name: 'Декабрь 2025', order: 12 }
+            'january': { name: 'Январь', order: 1, days: 31 },
+            'february': { name: 'Февраль', order: 2, days: 28 },
+            'march': { name: 'Март', order: 3, days: 31 },
+            'april': { name: 'Апрель', order: 4, days: 30 },
+            'may': { name: 'Май', order: 5, days: 31 },
+            'june': { name: 'Июнь', order: 6, days: 30 },
+            'july': { name: 'Июль', order: 7, days: 31 },
+            'august': { name: 'Август', order: 8, days: 31 },
+            'september': { name: 'Сентябрь', order: 9, days: 30 },
+            'october': { name: 'Октябрь', order: 10, days: 31 },
+            'november': { name: 'Ноябрь', order: 11, days: 30 },
+            'december': { name: 'Декабрь', order: 12, days: 31 }
         };
 
         // Статистические кеши для принудительного обновления
@@ -1154,15 +1215,26 @@
             '🏋️', '💆‍♀️', '🧔', '🦷', '🧴', '🧼', '🪒'
         ];
 
-        // ==================== УПРАВЛЕНИЕ МЕСЯЦАМИ ====================
+        // ==================== УПРАВЛЕНИЕ МЕСЯЦАМИ И ДАТАМИ ====================
 
         function getCurrentMonth() {
             const now = new Date();
             const month = now.getMonth() + 1; // 1-12
             const year = now.getFullYear();
             
+            // Определяем текущую дату
+            todayDate = now.getDate();
+            
             if (year === 2025) {
                 switch(month) {
+                    case 1: return 'january';
+                    case 2: return 'february';
+                    case 3: return 'march';
+                    case 4: return 'april';
+                    case 5: return 'may';
+                    case 6: return 'june';
+                    case 7: return 'july';
+                    case 8: return 'august';
                     case 9: return 'september';
                     case 10: return 'october';
                     case 11: return 'november';
@@ -1173,6 +1245,46 @@
             return 'september';
         }
 
+        function getDaysInCurrentMonth() {
+            const monthInfo = monthNames[currentMonth];
+            let days = monthInfo ? monthInfo.days : 30;
+            
+            // Проверяем високосный год для февраля
+            if (currentMonth === 'february') {
+                const isLeapYear = (currentYear % 4 === 0 && currentYear % 100 !== 0) || (currentYear % 400 === 0);
+                days = isLeapYear ? 29 : 28;
+            }
+            
+            return days;
+        }
+
+        function generateTableHeader() {
+            const header = document.getElementById('tableHeader');
+            
+            // Очищаем старые заголовки (кроме первых двух)
+            while (header.children.length > 2) {
+                header.removeChild(header.lastChild);
+            }
+            
+            // Генерируем заголовки для дней месяца
+            for (let day = 1; day <= daysInMonth; day++) {
+                const th = document.createElement('th');
+                th.textContent = day;
+                
+                // Подсвечиваем сегодняшний день
+                if (day === todayDate) {
+                    th.classList.add('today-header');
+                }
+                
+                // Добавляем разделители недель (каждые 7 дней)
+                if (day % 7 === 1 && day > 1) {
+                    th.classList.add('week-separator');
+                }
+                
+                header.appendChild(th);
+            }
+        }
+
         function updateCurrentMonth() {
             const autoMonth = getCurrentMonth();
             if (autoMonth !== currentMonth) {
@@ -1180,9 +1292,18 @@
                 saveToHistory();
                 // Переключаемся на новый месяц
                 currentMonth = autoMonth;
-                document.getElementById('currentMonth').textContent = monthNames[currentMonth].name;
+                daysInMonth = getDaysInCurrentMonth();
+                document.getElementById('currentMonth').textContent = `${monthNames[currentMonth].name} ${currentYear}`;
+                
+                // Генерируем новый заголовок таблицы
+                generateTableHeader();
+                
                 // Создаем новые пустые данные для нового месяца
                 createNewMonthData();
+                
+                // Пересоздаем таблицу
+                createHabitsTable();
+                
                 showSaveIndicator(true, `📅 Новый месяц: ${monthNames[currentMonth].name}`);
             }
         }
@@ -1197,6 +1318,7 @@
                 statistics: JSON.parse(JSON.stringify(statisticsCache)),
                 month: currentMonth,
                 year: currentYear,
+                daysInMonth: daysInMonth,
                 savedAt: new Date().toISOString()
             };
         }
@@ -1220,7 +1342,7 @@
                 const days = habitData[habitIndex];
                 let bitString = '';
                 
-                for (let day = 1; day <= 30; day++) {
+                for (let day = 1; day <= daysInMonth; day++) {
                     const state = days[day] || 0;
                     // Кодируем: 0=00, 1=01, 2=10
                     if (state === 0) bitString += '00';
@@ -1253,7 +1375,7 @@
                 });
                 
                 habitData[habitIndex] = {};
-                for (let day = 1; day <= 30; day++) {
+                for (let day = 1; day <= daysInMonth; day++) {
                     const bitIndex = (day - 1) * 2;
                     const stateBits = bitString.slice(bitIndex, bitIndex + 2);
                     
@@ -1302,6 +1424,7 @@
             saveData.statisticsCache = statisticsCache;
             saveData.month = currentMonth;
             saveData.year = currentYear;
+            saveData.daysInMonth = daysInMonth;
             saveData.historyData = historyData;
             
             if (data.habitData) {
@@ -1310,7 +1433,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '19.0-fixed-ui-system'
+                    version: '20.0-calendar-system'
                 };
             }
             
@@ -1389,6 +1512,10 @@
                             historyData = parsed.historyData;
                         }
                         
+                        if (parsed.daysInMonth) {
+                            daysInMonth = parsed.daysInMonth;
+                        }
+                        
                         if (parsed.compressed && parsed.habitData) {
                             parsed.habitData = decompressHabitData(parsed.habitData);
                             if (parsed.habits) {
@@ -1414,6 +1541,10 @@
                     
                     if (parsed.historyData) {
                         historyData = parsed.historyData;
+                    }
+                    
+                    if (parsed.daysInMonth) {
+                        daysInMonth = parsed.daysInMonth;
                     }
                     
                     if (parsed.compressed && parsed.habitData) {
@@ -1463,7 +1594,8 @@
                 statisticsCache: statisticsCache,
                 historyData: historyData,
                 month: currentMonth,
-                year: currentYear
+                year: currentYear,
+                daysInMonth: daysInMonth
             };
             
             const settingsData = {
@@ -1474,7 +1606,8 @@
                 planned: plannedCount,
                 completed: completedCount,
                 statisticsCache: statisticsCache,
-                historyData: historyData
+                historyData: historyData,
+                daysInMonth: daysInMonth
             };
             
             const [progressResult, settingsResult] = await Promise.all([
@@ -1502,6 +1635,9 @@
                 if (settingsResult.data.historyData) {
                     historyData = settingsResult.data.historyData;
                 }
+                if (settingsResult.data.daysInMonth) {
+                    daysInMonth = settingsResult.data.daysInMonth;
+                }
             }
             
             if (progressResult.data) {
@@ -1518,6 +1654,9 @@
                 }
                 if (progressResult.data.historyData) {
                     historyData = { ...historyData, ...progressResult.data.historyData };
+                }
+                if (progressResult.data.daysInMonth) {
+                    daysInMonth = progressResult.data.daysInMonth;
                 }
             }
             
@@ -1675,8 +1814,9 @@
                 const monthDiv = document.createElement('div');
                 monthDiv.className = 'history-month';
                 
-                const monthName = monthNames[monthKey] ? monthNames[monthKey].name : monthKey;
+                const monthName = monthNames[monthKey] ? `${monthNames[monthKey].name} ${monthData.year}` : monthKey;
                 const stats = monthData.statistics || {};
+                const monthDays = monthData.daysInMonth || 30;
                 
                 monthDiv.innerHTML = `
                     <div class="history-month-title">${monthName}</div>
@@ -1702,7 +1842,7 @@
                         let completed = 0;
                         let totalGoal = 0;
                         
-                        for (let day = 1; day <= daysInMonth; day++) {
+                        for (let day = 1; day <= monthDays; day++) {
                             const state = monthData.habitData[index] && monthData.habitData[index][day] ? monthData.habitData[index][day] : 0;
                             if (state === 1) totalGoal++;
                             else if (state === 2) {
@@ -1877,6 +2017,7 @@
                 username: tgApp?.initDataUnsafe?.user?.username || null,
                 timestamp: new Date().toISOString(),
                 date: new Date().toISOString().split('T')[0],
+                current_day: todayDate,
                 
                 // Основные данные
                 habits_data: habitData,
@@ -1896,6 +2037,7 @@
                 
                 month: currentMonth,
                 year: currentYear,
+                days_in_month: daysInMonth,
                 request_type: 'ai_analysis',
                 analysis_request: 'Проанализируй мой прогресс и дай рекомендации на основе детальной статистики'
             };
@@ -2149,7 +2291,7 @@
                 row.className = 'habit-row';
                 
                 let rowHTML = `
-                    <td class="habit-name">
+                    <td class="habit-name sticky-habits">
                         <input type="text" 
                                class="habit-input" 
                                value="${habit.name}" 
@@ -2157,17 +2299,18 @@
                                onblur="forceSaveProgress()">
                         <span class="delete-habit" onclick="showDeleteModal(${habitIndex})" title="Удалить привычку">🗑</span>
                     </td>
-                    <td class="goal-cell">
+                    <td class="goal-cell sticky-goal">
                         <span class="goal-display" id="goal_${habitIndex}">0</span>
                     </td>
                 `;
 
                 for (let day = 1; day <= daysInMonth; day++) {
-                    const isWeekStart = day === 8 || day === 15 || day === 22 || day === 29;
+                    const isWeekStart = day % 7 === 1 && day > 1;
                     const extraClass = isWeekStart ? ' week-separator' : '';
+                    const isTodayColumn = day === todayDate ? ' today-column' : '';
                     
                     rowHTML += `
-                        <td class="${extraClass}">
+                        <td class="${extraClass}${isTodayColumn}">
                             <div class="tri-state-checkbox" 
                                  data-habit="${habitIndex}" 
                                  data-day="${day}"
@@ -2192,8 +2335,21 @@
             // Переключаем: 0 -> 1 -> 2 -> 0
             let newState = (currentState + 1) % 3;
             
+            // Проверяем блокировку будущих дат для "выполнено"
+            if (day > todayDate && newState === 2) {
+                // Блокируем выполнение на будущие даты - возвращаем к планированию
+                newState = 1;
+                
+                // Показываем подсказку
+                if (tgApp) {
+                    tgApp.showAlert('Нельзя отмечать будущие дни как выполненные');
+                } else {
+                    alert('Нельзя отмечать будущие дни как выполненные');
+                }
+            }
+            
             // Убираем все классы
-            element.classList.remove('planned', 'completed');
+            element.classList.remove('planned', 'completed', 'future-disabled');
             element.textContent = '';
             
             // Добавляем нужный класс и содержимое
@@ -2203,6 +2359,11 @@
             } else if (newState === 2) {
                 element.classList.add('completed');
                 element.textContent = '✓';
+            }
+            
+            // Добавляем индикацию для будущих дат
+            if (day > todayDate && newState === 2) {
+                element.classList.add('future-disabled');
             }
             
             // Сохраняем состояние
@@ -2253,7 +2414,7 @@
                     const state = habitData[habitIndex] && habitData[habitIndex][day] ? habitData[habitIndex][day] : 0;
                     
                     // Убираем все классы
-                    checkbox.classList.remove('planned', 'completed');
+                    checkbox.classList.remove('planned', 'completed', 'future-disabled');
                     checkbox.textContent = '';
                     
                     if (state === 1) {
@@ -2264,6 +2425,11 @@
                         checkbox.classList.add('completed');
                         checkbox.textContent = '✓';
                         restoredCount++;
+                    }
+                    
+                    // Добавляем индикацию для будущих дат
+                    if (day > todayDate && state === 2) {
+                        checkbox.classList.add('future-disabled');
                     }
                 });
                 
@@ -2296,9 +2462,13 @@
             // Инициализируем эмодзи пикер
             initializeEmojiPicker();
             
-            // Определяем текущий месяц
+            // Определяем текущий месяц и дни в нем
             currentMonth = getCurrentMonth();
-            document.getElementById('currentMonth').textContent = monthNames[currentMonth].name;
+            daysInMonth = getDaysInCurrentMonth();
+            document.getElementById('currentMonth').textContent = `${monthNames[currentMonth].name} ${currentYear}`;
+            
+            // Генерируем заголовок таблицы с реальными датами
+            generateTableHeader();
             
             // Загружаем данные
             const hasData = await loadAllData();
