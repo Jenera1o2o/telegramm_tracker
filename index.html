@@ -191,11 +191,16 @@
             z-index: 10;
         }
 
-        .tracker-table th:first-child {
+        .tracker-table th:first-child,
+        .tracker-table th:nth-child(2) {
             position: sticky;
             left: 0;
             z-index: 11;
-            min-width: 140px;
+            background: #f8fafc;
+        }
+
+        .tracker-table th:nth-child(2) {
+            left: 160px; /* Ширина первого столбца */
         }
 
         .tracker-table td {
@@ -205,11 +210,20 @@
             background: #ffffff;
         }
 
-        .tracker-table td:first-child {
+        .tracker-table td:first-child,
+        .tracker-table td:nth-child(2) {
             position: sticky;
-            left: 0;
             background: #ffffff;
             z-index: 9;
+        }
+
+        .tracker-table td:first-child {
+            left: 0;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .tracker-table td:nth-child(2) {
+            left: 160px;
             border-right: 1px solid #e2e8f0;
         }
 
@@ -217,7 +231,8 @@
             background-color: #f8fafc;
         }
 
-        .habit-row:hover td:first-child {
+        .habit-row:hover td:first-child,
+        .habit-row:hover td:nth-child(2) {
             background-color: #f8fafc;
         }
 
@@ -225,7 +240,8 @@
             text-align: left !important;
             font-weight: 500;
             padding-left: 12px !important;
-            min-width: 140px;
+            width: 160px;
+            min-width: 160px;
             font-size: 12px;
             position: relative;
             color: #1e293b;
@@ -508,9 +524,9 @@
         }
 
         .habit-option.selected {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
             color: white;
-            border-color: #10b981;
+            border-color: #059669;
         }
 
         .custom-habit {
@@ -837,8 +853,14 @@
             }
 
             .habit-name {
+                width: 120px;
                 min-width: 120px;
                 font-size: 11px;
+            }
+
+            .tracker-table th:nth-child(2),
+            .tracker-table td:nth-child(2) {
+                left: 120px;
             }
 
             .controls {
@@ -866,8 +888,14 @@
             }
             
             .habit-name {
+                width: 100px;
                 min-width: 100px;
                 font-size: 10px;
+            }
+
+            .tracker-table th:nth-child(2),
+            .tracker-table td:nth-child(2) {
+                left: 100px;
             }
 
             .tri-state-checkbox {
@@ -922,7 +950,7 @@
 
         <div style="text-align: center; margin-top: 30px;">
             <button onclick="finishSetup()" class="btn btn-secondary" style="padding: 12px 30px; font-size: 16px; background: linear-gradient(135deg, #20b2aa 0%, #1e90ff 100%); color: white;">
-                ✅ Начать отслеживание
+                ✅ Сохранить изменения
             </button>
         </div>
     </div>
@@ -948,7 +976,7 @@
                 <span class="lightning-icon">⚡</span>
                 <span>Добро пожаловать, Пользователь</span>
             </div>
-            <div class="subtitle-text">Трансформация начинается с одного клика</div>
+            <div class="subtitle-text">Начни управлять своим временем</div>
             <div class="month-display" id="currentMonth">Сентябрь 2025</div>
         </div>
 
@@ -1021,7 +1049,7 @@
             <div class="controls">
                 <button class="btn btn-secondary" onclick="showSetupWizard()">⚙️ Настройки</button>
                 <button class="btn btn-history" onclick="showHistory()">📊 История</button>
-                <button class="btn btn-ai" onclick="requestAIAnalysis()">🤖 Анализ AI</button>
+                <button class="btn btn-ai" onclick="requestAIAnalysis()">🤖 Анализ ИИ</button>
             </div>
         </div>
     </div>
@@ -1282,7 +1310,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '18.0-enhanced-ui-system'
+                    version: '19.0-fixed-ui-system'
                 };
             }
             
@@ -1502,6 +1530,8 @@
             let totalCompleted = 0;
             let totalGoals = 0;
             const habitProgress = [];
+            let bestHabitIndex = -1;
+            let maxCompletedCount = 0;
 
             habits.forEach((habit, habitIndex) => {
                 let completed = 0;
@@ -1515,6 +1545,12 @@
                         completed++;
                         planned++; // completed также считается как planned для цели
                     }
+                }
+                
+                // Находим привычку с наибольшим количеством выполненных задач
+                if (completed > maxCompletedCount) {
+                    maxCompletedCount = completed;
+                    bestHabitIndex = habitIndex;
                 }
                 
                 // Цель = общее количество отмеченных дней (серые + зеленые)
@@ -1533,9 +1569,8 @@
 
             const overallProgress = totalGoals > 0 ? Math.round((totalCompleted / totalGoals) * 100) : 0;
             
-            // Находим лучшую привычку
-            const bestHabitIndex = habitProgress.findIndex(h => h.progress === Math.max(...habitProgress.map(p => p.progress)));
-            const bestHabit = habits[bestHabitIndex];
+            // Лучшая привычка = привычка с наибольшим количеством выполненных задач
+            const bestHabit = bestHabitIndex >= 0 ? habits[bestHabitIndex] : null;
 
             statisticsCache = {
                 totalCompleted: totalCompleted,
@@ -2082,26 +2117,15 @@
             }
         }
 
+        // ИСПРАВЛЕНО: finishSetup теперь работает как goBack
         async function finishSetup() {
-            // Если совсем нет привычек, добавляем примеры
-            if (habits.length === 0) {
-                habits = [
-                    { name: "🏃🏻 10000 шагов", goal: 0, icon: "🏃🏻" },
-                    { name: "🥗 Здоровое питание", goal: 0, icon: "🥗" },
-                    { name: "📖 Чтение книг", goal: 0, icon: "📖" }
-                ];
-                
-                habits.forEach((habit, index) => {
-                    habitData[index] = {};
-                    for (let day = 1; day <= daysInMonth; day++) {
-                        habitData[index][day] = 0;
-                    }
-                });
-            }
-            
+            // Автосохранение выбранных привычек
             await forceSaveProgress();
+            
+            // Возвращаемся к основному экрану
             goBack();
             
+            // Обновляем таблицу
             createHabitsTable();
             
             setTimeout(() => {
