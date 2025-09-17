@@ -1494,7 +1494,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '27.0-fixed-deletion'
+                    version: '28.0-unified-deletion'
                 };
             }
             
@@ -1937,40 +1937,53 @@
             document.getElementById('deleteModal').classList.remove('show');
         }
 
-        // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ УДАЛЕНИЯ ПРИВЫЧКИ (БЕЗ ЗАТИРАНИЯ ДАННЫХ)
-       async function confirmDeleteHabit() {
-    // 1. Сохраняем текущее habitData
-    document.querySelectorAll('.tri-state-checkbox').forEach(cb => {
-        const h = +cb.dataset.habit, d = +cb.dataset.day;
-        let s = 0;
-        if (cb.classList.contains('planned')) s = 1;
-        else if (cb.classList.contains('completed')) s = 2;
-        habitData[h][d] = s;
-    });
-
-    // 2. Удаляем привычку
-    const idx = habitToDelete;
-    habits.splice(idx, 1);
-
-    // 3. Реконструируем habitData
-    const newData = {};
-    habits.forEach((_, newIdx) => {
-        const oldIdx = newIdx < idx ? newIdx : newIdx + 1;
-        newData[newIdx] = { ...habitData[oldIdx] };
-    });
-    habitData = newData;
-
-    // 4. Пересоздаём таблицу и восстанавливаем чекбоксы
-    closeDeleteModal();
-    createHabitsTable();
-    setTimeout(() => {
-        restoreCheckboxes();
-        calculateStatistics();
-        updateStatisticsDisplay();
-        forceSaveProgress();
-    }, 50);
-}
-
+        // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ - ТЕПЕРЬ ИСПОЛЬЗУЕТ ТУ ЖЕ ЛОГИКУ ЧТО И НАСТРОЙКИ
+        async function confirmDeleteHabit() {
+            if (habitToDelete === -1) return;
+            
+            if (habits.length <= 1) {
+                closeDeleteModal();
+                if (tgApp) {
+                    tgApp.showAlert('Нельзя удалить последнюю привычку!');
+                } else {
+                    alert('Нельзя удалить последнюю привычку!');
+                }
+                return;
+            }
+            
+            // Используем ту же логику что и в настройках
+            const habitToRemove = habits[habitToDelete];
+            
+            // Создаем имитацию элемента для toggleHabitSelection
+            const fakeElement = {
+                classList: {
+                    contains: () => true, // Имитируем что привычка выбрана
+                    add: () => {},
+                    remove: () => {}
+                },
+                innerHTML: ''
+            };
+            
+            closeDeleteModal();
+            
+            // Вызываем ту же функцию что и в настройках
+            toggleHabitSelection(-1, fakeElement, habitToRemove);
+            
+            // Обновляем интерфейс
+            setTimeout(() => {
+                createHabitsTable();
+                setTimeout(() => {
+                    restoreCheckboxes();
+                    setTimeout(() => {
+                        calculateStatistics();
+                        updateStatisticsDisplay();
+                        updateVerticalBars();
+                        updateProgress();
+                    }, 200);
+                }, 100);
+                showSaveIndicator(true, '✅ Привычка удалена');
+            }, 50);
+        }
 
         // ==================== ЭМОДЗИ ПИКЕР ====================
 
@@ -2159,7 +2172,22 @@
             });
         }
 
+        // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ - ТЕПЕРЬ ПРАВИЛЬНО СОХРАНЯЕТ СОСТОЯНИЕ ЧЕКБОКСОВ
         function toggleHabitSelection(index, element, habit) {
+            // КРИТИЧЕСКИ ВАЖНО: Сначала сохраняем текущее состояние всех чекбоксов
+            document.querySelectorAll('.tri-state-checkbox').forEach(checkbox => {
+                const habitIndex = parseInt(checkbox.dataset.habit);
+                const day = parseInt(checkbox.dataset.day);
+                
+                let state = 0;
+                if (checkbox.classList.contains('planned')) state = 1;
+                else if (checkbox.classList.contains('completed')) state = 2;
+                
+                if (habitData[habitIndex] !== undefined) {
+                    habitData[habitIndex][day] = state;
+                }
+            });
+            
             if (element.classList.contains('selected')) {
                 // Убираем привычку
                 element.classList.remove('selected');
@@ -2170,13 +2198,17 @@
                 if (habitIndex !== -1) {
                     habits.splice(habitIndex, 1);
                     
-                    // Перестраиваем habitData
+                    // ПРАВИЛЬНО перестраиваем habitData, сохраняя данные всех остальных привычек
                     const newHabitData = {};
                     habits.forEach((h, newIndex) => {
                         const oldIndex = newIndex >= habitIndex ? newIndex + 1 : newIndex;
-                        newHabitData[newIndex] = habitData[oldIndex] || {};
+                        
+                        // Копируем все дни для этой привычки
+                        newHabitData[newIndex] = {};
                         for (let day = 1; day <= daysInMonth; day++) {
-                            if (!newHabitData[newIndex][day]) {
+                            if (habitData[oldIndex] && habitData[oldIndex][day] !== undefined) {
+                                newHabitData[newIndex][day] = habitData[oldIndex][day];
+                            } else {
                                 newHabitData[newIndex][day] = 0;
                             }
                         }
@@ -2238,20 +2270,17 @@
                     
                     const habitIndex = habits.findIndex(h => h.name === habitName);
                     if (habitIndex !== -1) {
-                        habits.splice(habitIndex, 1);
-                        
-                        // Перестраиваем habitData
-                        const newHabitData = {};
-                        habits.forEach((h, newIndex) => {
-                            const oldIndex = newIndex >= habitIndex ? newIndex + 1 : newIndex;
-                            newHabitData[newIndex] = habitData[oldIndex] || {};
-                            for (let day = 1; day <= daysInMonth; day++) {
-                                if (!newHabitData[newIndex][day]) {
-                                    newHabitData[newIndex][day] = 0;
-                                }
-                            }
-                        });
-                        habitData = newHabitData;
+                        // Используем ту же логику что и в toggleHabitSelection
+                        const fakeElement = {
+                            classList: {
+                                contains: () => true,
+                                add: () => {},
+                                remove: () => {}
+                            },
+                            innerHTML: ''
+                        };
+                        const habitToRemove = habits[habitIndex];
+                        toggleHabitSelection(-1, fakeElement, habitToRemove);
                     }
                 }
             }
@@ -2272,25 +2301,21 @@
             const habitName = `${emoji} ${input.value.trim()}`;
             
             if (toggle.classList.contains('active')) {
-                // Убираем из таблицы
+                // Убираем из таблицы - используем toggleHabitSelection
                 toggle.classList.remove('active');
                 
                 const habitIndex = habits.findIndex(h => h.name === habitName);
                 if (habitIndex !== -1) {
-                    habits.splice(habitIndex, 1);
-                    
-                    // Перестраиваем habitData
-                    const newHabitData = {};
-                    habits.forEach((h, newIndex) => {
-                        const oldIndex = newIndex >= habitIndex ? newIndex + 1 : newIndex;
-                        newHabitData[newIndex] = habitData[oldIndex] || {};
-                        for (let day = 1; day <= daysInMonth; day++) {
-                            if (!newHabitData[newIndex][day]) {
-                                newHabitData[newIndex][day] = 0;
-                            }
-                        }
-                    });
-                    habitData = newHabitData;
+                    const fakeElement = {
+                        classList: {
+                            contains: () => true,
+                            add: () => {},
+                            remove: () => {}
+                        },
+                        innerHTML: ''
+                    };
+                    const habitToRemove = habits[habitIndex];
+                    toggleHabitSelection(-1, fakeElement, habitToRemove);
                 }
             } else {
                 // Добавляем в таблицу
