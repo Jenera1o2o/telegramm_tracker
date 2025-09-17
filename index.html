@@ -178,7 +178,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 180px;
+            width: 200px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 12px 0 0 12px;
@@ -230,13 +230,15 @@
         .tracker-table th {
             background: #f8fafc;
             color: #1e293b;
-            padding: 10px 6px;
+            padding: 6px 3px;
             font-weight: 600;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             border-bottom: 2px solid #e2e8f0;
             white-space: nowrap;
-            min-width: 40px;
+            min-width: 32px;
+            max-width: 32px;
+            width: 32px;
             height: 40px;
         }
 
@@ -247,12 +249,14 @@
         }
 
         .tracker-table td {
-            padding: 8px 6px;
+            padding: 6px 3px;
             text-align: center;
             border-bottom: 1px solid #f1f5f9;
             background: #ffffff;
             white-space: nowrap;
-            min-width: 40px;
+            min-width: 32px;
+            max-width: 32px;
+            width: 32px;
             height: 40px;
         }
 
@@ -297,7 +301,7 @@
 
         .goal-display {
             color: #20b2aa;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
         }
 
@@ -319,8 +323,8 @@
 
         /* Трехстадийные чекбоксы */
         .tri-state-checkbox {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             border: 2px solid #cbd5e0;
             border-radius: 3px;
@@ -328,7 +332,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -905,8 +909,15 @@
             
             .tracker-table th,
             .tracker-table td {
-                padding: 6px 4px;
+                padding: 4px 2px;
                 height: 36px;
+                min-width: 28px;
+                max-width: 28px;
+                width: 28px;
+            }
+
+            .tracker-table th {
+                font-size: 10px;
             }
 
             .habit-cell {
@@ -920,8 +931,9 @@
             }
 
             .tri-state-checkbox {
-                width: 16px;
-                height: 16px;
+                width: 14px;
+                height: 14px;
+                font-size: 10px;
             }
 
             .habit-name {
@@ -973,14 +985,22 @@
             }
 
             .tri-state-checkbox {
-                width: 14px;
-                height: 14px;
+                width: 12px;
+                height: 12px;
+                font-size: 9px;
             }
 
             .tracker-table th,
             .tracker-table td {
                 height: 34px;
-                padding: 5px 3px;
+                padding: 3px 1px;
+                min-width: 26px;
+                max-width: 26px;
+                width: 26px;
+            }
+
+            .tracker-table th {
+                font-size: 9px;
             }
 
             .habit-cell {
@@ -1474,7 +1494,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '25.0-compact-layout'
+                    version: '26.0-ultra-compact'
                 };
             }
             
