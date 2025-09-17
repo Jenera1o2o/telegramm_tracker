@@ -178,7 +178,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 160px;
+            width: 200px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 12px 0 0 12px;
@@ -195,6 +195,10 @@
             font-size: 12px;
             border-bottom: 2px solid #e2e8f0;
             border-right: 1px solid #e2e8f0;
+            height: 49px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .habit-cell {
@@ -202,6 +206,9 @@
             border-bottom: 1px solid #f1f5f9;
             background: #ffffff;
             border-right: 1px solid #e2e8f0;
+            height: 49px;
+            display: flex;
+            align-items: center;
         }
 
         .habit-cell:hover {
@@ -209,7 +216,7 @@
         }
 
         .scrollable-table {
-            margin-left: 160px;
+            margin-left: 200px;
             overflow-x: auto;
         }
 
@@ -230,6 +237,7 @@
             border-bottom: 2px solid #e2e8f0;
             white-space: nowrap;
             min-width: 40px;
+            height: 49px;
         }
 
         .tracker-table th.today-header {
@@ -245,6 +253,7 @@
             background: #ffffff;
             white-space: nowrap;
             min-width: 40px;
+            height: 49px;
         }
 
         .tracker-table td.today-column {
@@ -262,10 +271,11 @@
         .habit-name {
             text-align: left !important;
             font-weight: 500;
-            padding-left: 12px !important;
+            padding-left: 8px !important;
             font-size: 12px;
             position: relative;
             color: #1e293b;
+            width: 100%;
         }
 
         .habit-input {
@@ -276,6 +286,7 @@
             font-weight: 500;
             width: calc(100% - 25px);
             outline: none;
+            display: block;
         }
 
         .habit-input:focus {
@@ -296,6 +307,10 @@
             font-size: 12px;
             margin-left: 5px;
             display: none;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .habit-cell:hover .delete-habit {
@@ -891,6 +906,16 @@
             .tracker-table th,
             .tracker-table td {
                 padding: 8px 4px;
+                height: 42px;
+            }
+
+            .habit-cell {
+                height: 42px;
+                padding: 8px 4px;
+            }
+
+            .habits-header {
+                height: 42px;
             }
 
             .tri-state-checkbox {
@@ -903,11 +928,11 @@
             }
 
             .habits-column {
-                width: 120px;
+                width: 160px;
             }
 
             .scrollable-table {
-                margin-left: 120px;
+                margin-left: 160px;
             }
 
             .controls {
@@ -939,16 +964,29 @@
             }
 
             .habits-column {
-                width: 100px;
+                width: 140px;
             }
 
             .scrollable-table {
-                margin-left: 100px;
+                margin-left: 140px;
             }
 
             .tri-state-checkbox {
                 width: 14px;
                 height: 14px;
+            }
+
+            .tracker-table th,
+            .tracker-table td {
+                height: 38px;
+            }
+
+            .habit-cell {
+                height: 38px;
+            }
+
+            .habits-header {
+                height: 38px;
             }
         }
     </style>
@@ -1432,7 +1470,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '23.0-js-fixed-layout'
+                    version: '24.0-aligned-layout'
                 };
             }
             
