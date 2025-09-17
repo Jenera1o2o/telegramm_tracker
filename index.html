@@ -162,11 +162,55 @@
         }
 
         .tracker-section {
-            overflow-x: auto;
             margin-bottom: 20px;
             position: relative;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(30, 41, 59, 0.08);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .habits-column {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 160px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px 0 0 12px;
+            z-index: 100;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .habits-header {
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 12px 8px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .habit-cell {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .habit-cell:hover {
+            background-color: #f8fafc;
+        }
+
+        .scrollable-table {
+            margin-left: 160px;
+            overflow-x: auto;
         }
 
         .tracker-table {
@@ -174,9 +218,6 @@
             border-collapse: collapse;
             background: #ffffff;
             font-size: 13px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
         }
 
         .tracker-table th {
@@ -187,20 +228,8 @@
             text-align: center;
             font-size: 12px;
             border-bottom: 2px solid #e2e8f0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
             white-space: nowrap;
-        }
-
-        .tracker-table th:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 20;
-            min-width: 160px;
-            width: 160px;
-            background: #f8fafc;
-            border-right: 1px solid #e2e8f0;
+            min-width: 40px;
         }
 
         .tracker-table th.today-header {
@@ -215,27 +244,14 @@
             border-bottom: 1px solid #f1f5f9;
             background: #ffffff;
             white-space: nowrap;
-        }
-
-        .tracker-table td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 15;
-            min-width: 160px;
-            width: 160px;
-            background: #ffffff;
-            border-right: 1px solid #e2e8f0;
+            min-width: 40px;
         }
 
         .tracker-table td.today-column {
             background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
         }
 
-        .habit-row:hover {
-            background-color: #f8fafc;
-        }
-
-        .habit-row:hover td:first-child {
+        .habit-row:hover td {
             background-color: #f8fafc;
         }
 
@@ -282,7 +298,7 @@
             display: none;
         }
 
-        .habit-row:hover .delete-habit {
+        .habit-cell:hover .delete-habit {
             display: inline;
         }
 
@@ -886,10 +902,12 @@
                 font-size: 11px;
             }
 
-            .tracker-table th:first-child,
-            .tracker-table td:first-child {
-                min-width: 120px;
+            .habits-column {
                 width: 120px;
+            }
+
+            .scrollable-table {
+                margin-left: 120px;
             }
 
             .controls {
@@ -920,10 +938,12 @@
                 font-size: 10px;
             }
 
-            .tracker-table th:first-child,
-            .tracker-table td:first-child {
-                min-width: 100px;
+            .habits-column {
                 width: 100px;
+            }
+
+            .scrollable-table {
+                margin-left: 100px;
             }
 
             .tri-state-checkbox {
@@ -1037,18 +1057,30 @@
         <div class="main-content">
             <!-- Tracker Table -->
             <div class="tracker-section">
-                <table class="tracker-table" id="trackerTable">
-                    <thead>
-                        <tr id="tableHeader">
-                            <th>Привычки</th>
-                            <th>Цель</th>
-                            <!-- Дни будут сгенерированы JS -->
-                        </tr>
-                    </thead>
-                    <tbody id="habitsTable">
-                        <!-- Habits will be populated by JavaScript -->
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <!-- Закрепленная колонка привычек -->
+                    <div class="habits-column" id="habitsColumn">
+                        <div class="habits-header">Привычки</div>
+                        <div id="habitsCells">
+                            <!-- Будет заполнено JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Прокручиваемая таблица -->
+                    <div class="scrollable-table">
+                        <table class="tracker-table" id="trackerTable">
+                            <thead>
+                                <tr id="tableHeader">
+                                    <th>Цель</th>
+                                    <!-- Дни будут сгенерированы JS -->
+                                </tr>
+                            </thead>
+                            <tbody id="habitsTable">
+                                <!-- Habits will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Charts Section -->
@@ -1228,8 +1260,8 @@
         function generateTableHeader() {
             const header = document.getElementById('tableHeader');
             
-            // Очищаем старые заголовки (кроме первых двух)
-            while (header.children.length > 2) {
+            // Очищаем старые заголовки (кроме первого - "Цель")
+            while (header.children.length > 1) {
                 header.removeChild(header.lastChild);
             }
             
@@ -1400,7 +1432,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '22.0-fixed-sticky'
+                    version: '23.0-js-fixed-layout'
                 };
             }
             
@@ -2226,7 +2258,6 @@
             }
         }
 
-        // ИСПРАВЛЕНО: finishSetup теперь работает как goBack
         async function finishSetup() {
             // Автосохранение выбранных привычек
             await forceSaveProgress();
@@ -2249,23 +2280,37 @@
             }, 500);
         }
 
+        // ==================== СОЗДАНИЕ ТАБЛИЦЫ ====================
+
         function createHabitsTable() {
+            const habitsColumn = document.getElementById('habitsCells');
             const tbody = document.getElementById('habitsTable');
+            
+            // Очищаем
+            habitsColumn.innerHTML = '';
             tbody.innerHTML = '';
 
             habits.forEach((habit, habitIndex) => {
-                const row = document.createElement('tr');
-                row.className = 'habit-row';
-                
-                let rowHTML = `
-                    <td class="habit-name">
+                // Добавляем в закрепленную колонку
+                const habitCell = document.createElement('div');
+                habitCell.className = 'habit-cell';
+                habitCell.innerHTML = `
+                    <div class="habit-name">
                         <input type="text" 
                                class="habit-input" 
                                value="${habit.name}" 
                                onchange="updateHabitName(${habitIndex}, this.value)"
                                onblur="forceSaveProgress()">
                         <span class="delete-habit" onclick="showDeleteModal(${habitIndex})" title="Удалить привычку">🗑</span>
-                    </td>
+                    </div>
+                `;
+                habitsColumn.appendChild(habitCell);
+                
+                // Добавляем строку в таблицу
+                const row = document.createElement('tr');
+                row.className = 'habit-row';
+                
+                let rowHTML = `
                     <td class="goal-cell">
                         <span class="goal-display" id="goal_${habitIndex}">0</span>
                     </td>
@@ -2299,7 +2344,7 @@
             if (element.classList.contains('planned')) currentState = 1;
             else if (element.classList.contains('completed')) currentState = 2;
             
-            // ИСПРАВЛЕНО: Логика для будущих дат
+            // Логика для будущих дат
             if (day > todayDate) {
                 // Для будущих дат: только 0 -> 1 -> 0
                 if (currentState === 0) {
@@ -2396,7 +2441,7 @@
                     showSaveIndicator(true, `✅ Восстановлено ${restoredCount} отметок`);
                 }
                 
-                // ИСПРАВЛЕНИЕ: Принудительно обновляем цели при загрузке
+                // Принудительно обновляем цели при загрузке
                 setTimeout(() => {
                     calculateStatistics();
                     updateStatisticsDisplay();
