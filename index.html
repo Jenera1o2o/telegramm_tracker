@@ -1494,7 +1494,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '26.0-ultra-compact'
+                    version: '27.0-fixed-deletion'
                 };
             }
             
@@ -1937,6 +1937,7 @@
             document.getElementById('deleteModal').classList.remove('show');
         }
 
+        // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ УДАЛЕНИЯ ПРИВЫЧКИ (БЕЗ ЗАТИРАНИЯ ДАННЫХ)
         async function confirmDeleteHabit() {
             if (habitToDelete === -1) return;
             
@@ -1950,25 +1951,50 @@
                 return;
             }
             
-            const index = habitToDelete;
-            habits.splice(index, 1);
+            const indexToDelete = habitToDelete;
             
+            // ИСПРАВЛЕНИЕ: Сначала сохраняем текущее состояние всех чекбоксов в habitData
+            document.querySelectorAll('.tri-state-checkbox').forEach(checkbox => {
+                const habitIndex = parseInt(checkbox.dataset.habit);
+                const day = parseInt(checkbox.dataset.day);
+                
+                let state = 0;
+                if (checkbox.classList.contains('planned')) state = 1;
+                else if (checkbox.classList.contains('completed')) state = 2;
+                
+                if (habitData[habitIndex] !== undefined) {
+                    habitData[habitIndex][day] = state;
+                }
+            });
+            
+            // Удаляем привычку из массива
+            habits.splice(indexToDelete, 1);
+            
+            // Создаем новый habitData, сохраняя данные всех остальных привычек
             const newHabitData = {};
             habits.forEach((habit, newIndex) => {
-                const oldIndex = newIndex >= index ? newIndex + 1 : newIndex;
-                newHabitData[newIndex] = habitData[oldIndex] || {};
+                const oldIndex = newIndex >= indexToDelete ? newIndex + 1 : newIndex;
+                
+                // Копируем все дни для этой привычки
+                newHabitData[newIndex] = {};
                 for (let day = 1; day <= daysInMonth; day++) {
-                    if (!newHabitData[newIndex][day]) {
+                    if (habitData[oldIndex] && habitData[oldIndex][day] !== undefined) {
+                        newHabitData[newIndex][day] = habitData[oldIndex][day];
+                    } else {
                         newHabitData[newIndex][day] = 0;
                     }
                 }
             });
+            
             habitData = newHabitData;
             
             closeDeleteModal();
+            
+            // Пересоздаем таблицу
             createHabitsTable();
             
-            setTimeout(async () => {
+            // Восстанавливаем чекбоксы с правильными данными
+            setTimeout(() => {
                 restoreCheckboxes();
                 setTimeout(() => {
                     calculateStatistics();
@@ -1976,7 +2002,10 @@
                     updateVerticalBars();
                     updateProgress();
                 }, 200);
-                await forceSaveProgress();
+                
+                // Сохраняем обновленное состояние
+                forceSaveProgress();
+                showSaveIndicator(true, '✅ Привычка удалена');
             }, 100);
         }
 
