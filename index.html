@@ -248,6 +248,11 @@
             font-weight: 700;
         }
 
+        .tracker-table th.weekend-header {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #6b7280;
+        }
+
         .tracker-table td {
             padding: 6px 3px;
             text-align: center;
@@ -264,12 +269,20 @@
             background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
         }
 
+        .tracker-table td.weekend-column {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+
         .habit-row:hover td {
             background-color: #f8fafc;
         }
 
         .habit-row:hover td.today-column {
             background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+        }
+
+        .habit-row:hover td.weekend-column {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         }
 
         .habit-name {
@@ -483,10 +496,6 @@
 
         .btn:active {
             transform: scale(0.98);
-        }
-
-        .week-separator {
-            border-left: 2px solid #20b2aa !important;
         }
 
         /* Setup Wizard */
@@ -1087,7 +1096,7 @@
                 <span>Добро пожаловать, Пользователь</span>
             </div>
             <div class="subtitle-text">Начни управлять своим временем</div>
-            <div class="month-display" id="currentMonth">Сентябрь 2025</div>
+            <div class="month-display" id="currentMonth">Октябрь 2025</div>
         </div>
 
         <!-- Statistics Bar -->
@@ -1178,10 +1187,10 @@
         let habits = [];
         let habitData = {};
         let historyData = {};
-        let daysInMonth = 30; // будет динамически определяться
+        let daysInMonth = 31; // октябрь имеет 31 день
         let isInitialized = false;
         let currentEmojiPicker = null;
-        let currentMonth = 'september';
+        let currentMonth = 'october'; // изменено на октябрь
         let currentYear = 2025;
         let habitToDelete = -1;
         let todayDate = null;
@@ -1300,15 +1309,15 @@
                     case 10: return 'october';
                     case 11: return 'november';
                     case 12: return 'december';
-                    default: return 'september';
+                    default: return 'october';
                 }
             }
-            return 'september';
+            return 'october';
         }
 
         function getDaysInCurrentMonth() {
             const monthInfo = monthNames[currentMonth];
-            let days = monthInfo ? monthInfo.days : 30;
+            let days = monthInfo ? monthInfo.days : 31;
             
             // Проверяем високосный год для февраля
             if (currentMonth === 'february') {
@@ -1317,6 +1326,12 @@
             }
             
             return days;
+        }
+
+        function getWeekdayForDate(year, month, day) {
+            // month: 1-12 (январь = 1, февраль = 2, и т.д.)
+            const date = new Date(year, month - 1, day);
+            return date.getDay(); // 0 = воскресенье, 1 = понедельник, ..., 6 = суббота
         }
 
         function generateTableHeader() {
@@ -1332,26 +1347,31 @@
                 const th = document.createElement('th');
                 th.textContent = day;
                 
+                // Определяем день недели
+                const monthNumber = monthNames[currentMonth].order;
+                const weekday = getWeekdayForDate(currentYear, monthNumber, day);
+                
                 // Подсвечиваем сегодняшний день
                 if (day === todayDate) {
                     th.classList.add('today-header');
                 }
-                
-                // Добавляем разделители недель (каждые 7 дней)
-                if (day % 7 === 1 && day > 1) {
-                    th.classList.add('week-separator');
+                // Подсвечиваем выходные (суббота = 6, воскресенье = 0)
+                else if (weekday === 0 || weekday === 6) {
+                    th.classList.add('weekend-header');
                 }
                 
                 header.appendChild(th);
             }
         }
 
-        function updateCurrentMonth() {
+        async function updateCurrentMonth() {
             const autoMonth = getCurrentMonth();
             if (autoMonth !== currentMonth) {
-                // Сохраняем данные текущего месяца в историю
-                saveToHistory();
+                // ИСПРАВЛЕНИЕ: Сохраняем данные текущего месяца в историю ПЕРЕД переходом
+                await saveToHistory();
+                
                 // Переключаемся на новый месяц
+                const oldMonth = currentMonth;
                 currentMonth = autoMonth;
                 daysInMonth = getDaysInCurrentMonth();
                 document.getElementById('currentMonth').textContent = `${monthNames[currentMonth].name} ${currentYear}`;
@@ -1359,20 +1379,29 @@
                 // Генерируем новый заголовок таблицы
                 generateTableHeader();
                 
-                // Создаем новые пустые данные для нового месяца
-                createNewMonthData();
+                // ИСПРАВЛЕНИЕ: НЕ создаем новые пустые данные, а загружаем существующие или создаем пустые только если их нет
+                await loadOrCreateMonthData();
                 
                 // Пересоздаем таблицу
                 createHabitsTable();
                 
-                showSaveIndicator(true, `📅 Новый месяц: ${monthNames[currentMonth].name}`);
+                showSaveIndicator(true, `📅 Новый месяц: ${monthNames[currentMonth].name} (${oldMonth} сохранен в истории)`);
+                
+                // Восстанавливаем чекбоксы через некоторое время
+                setTimeout(() => {
+                    restoreCheckboxes();
+                }, 500);
             }
         }
 
-        function saveToHistory() {
+        async function saveToHistory() {
             if (!historyData[currentMonth]) {
                 historyData[currentMonth] = {};
             }
+            
+            // Сохраняем актуальную статистику
+            calculateStatistics();
+            
             historyData[currentMonth] = {
                 habits: JSON.parse(JSON.stringify(habits)),
                 habitData: JSON.parse(JSON.stringify(habitData)),
@@ -1382,6 +1411,66 @@
                 daysInMonth: daysInMonth,
                 savedAt: new Date().toISOString()
             };
+            
+            // ИСПРАВЛЕНИЕ: Принудительно сохраняем историю
+            await forceSaveProgress();
+            
+            console.log(`✅ Месяц ${currentMonth} сохранен в историю с ${habits.length} привычками`);
+        }
+
+        async function loadOrCreateMonthData() {
+            // ИСПРАВЛЕНИЕ: Пытаемся загрузить данные для нового месяца
+            const monthKey = `${currentMonth}_${currentYear}`;
+            const [settingsResult, progressResult] = await Promise.all([
+                loadDataReliably(`user_settings_${monthKey}`),
+                loadDataReliably(`habit_progress_${monthKey}`)
+            ]);
+            
+            let foundData = false;
+            
+            // Если есть сохраненные данные для нового месяца, загружаем их
+            if (settingsResult.data && settingsResult.data.habits && settingsResult.data.habits.length > 0) {
+                habits = settingsResult.data.habits;
+                if (settingsResult.data.habitData) {
+                    habitData = settingsResult.data.habitData;
+                }
+                foundData = true;
+                console.log(`✅ Загружены данные для ${currentMonth}: ${habits.length} привычек`);
+            }
+            
+            if (progressResult.data && progressResult.data.habitData) {
+                Object.keys(progressResult.data.habitData).forEach(habitIndex => {
+                    if (!habitData[habitIndex]) {
+                        habitData[habitIndex] = {};
+                    }
+                    habitData[habitIndex] = {
+                        ...habitData[habitIndex], 
+                        ...progressResult.data.habitData[habitIndex]
+                    };
+                });
+                foundData = true;
+            }
+            
+            // Если данных нет, создаем новые данные для существующих привычек
+            if (!foundData && habits.length > 0) {
+                console.log(`🔄 Создаем новые данные для ${habits.length} привычек в месяце ${currentMonth}`);
+                habitData = {};
+                habits.forEach((habit, index) => {
+                    habitData[index] = {};
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        habitData[index][day] = 0; // 0 = empty, 1 = planned, 2 = completed
+                    }
+                });
+                
+                // Сохраняем новые данные
+                await forceSaveProgress();
+            }
+            
+            // Если нет вообще никаких привычек, создаем пустые данные
+            if (habits.length === 0) {
+                habitData = {};
+                console.log('ℹ️ Нет привычек для нового месяца');
+            }
         }
 
         function createNewMonthData() {
@@ -1477,7 +1566,42 @@
             
             setTimeout(() => {
                 indicator.classList.remove('show');
-            }, 3000);
+            }, 4000);
+        }
+
+        // ИСПРАВЛЕНИЕ: Добавляем отдельное сохранение привычек независимо от месяца
+        async function saveHabitsGlobally() {
+            const globalHabitsData = {
+                habits: habits,
+                lastUpdated: new Date().toISOString(),
+                version: '29.0-month-transition-fix'
+            };
+            
+            const [progressResult, settingsResult] = await Promise.all([
+                saveDataReliably('global_habits', globalHabitsData),
+                saveDataReliably('global_habits_backup', globalHabitsData)
+            ]);
+            
+            if (progressResult.success || settingsResult.success) {
+                console.log('✅ Привычки сохранены глобально');
+                return true;
+            }
+            return false;
+        }
+
+        async function loadHabitsGlobally() {
+            const [result1, result2] = await Promise.all([
+                loadDataReliably('global_habits'),
+                loadDataReliably('global_habits_backup')
+            ]);
+            
+            const result = result1.data || result2.data;
+            if (result && result.habits && result.habits.length > 0) {
+                console.log(`✅ Загружено ${result.habits.length} привычек глобально`);
+                return result.habits;
+            }
+            console.log('ℹ️ Глобальные привычки не найдены');
+            return [];
         }
 
         async function saveDataReliably(key, data) {
@@ -1494,7 +1618,7 @@
                     habitData: compressHabitData(data.habitData),
                     habits: compressHabits(data.habits || habits),
                     compressed: true,
-                    version: '28.0-unified-deletion'
+                    version: '29.0-month-transition-fix'
                 };
             }
             
@@ -1671,9 +1795,10 @@
                 daysInMonth: daysInMonth
             };
             
-            const [progressResult, settingsResult] = await Promise.all([
+            const [progressResult, settingsResult, globalResult] = await Promise.all([
                 saveDataReliably(`habit_progress_${monthKey}`, progressData),
-                saveDataReliably(`user_settings_${monthKey}`, settingsData)
+                saveDataReliably(`user_settings_${monthKey}`, settingsData),
+                saveHabitsGlobally()
             ]);
             
             if (progressResult.success && settingsResult.success) {
@@ -1682,6 +1807,13 @@
         }
 
         async function loadAllData() {
+            // ИСПРАВЛЕНИЕ: Сначала пытаемся загрузить глобальные привычки
+            const globalHabits = await loadHabitsGlobally();
+            if (globalHabits.length > 0) {
+                habits = globalHabits;
+                console.log(`✅ Загружено ${habits.length} привычек из глобального хранилища`);
+            }
+            
             const monthKey = `${currentMonth}_${currentYear}`;
             const [settingsResult, progressResult] = await Promise.all([
                 loadDataReliably(`user_settings_${monthKey}`),
@@ -1689,7 +1821,10 @@
             ]);
             
             if (settingsResult.data) {
-                habits = settingsResult.data.habits || [];
+                // Если глобальных привычек нет, берем из настроек месяца
+                if (habits.length === 0 && settingsResult.data.habits) {
+                    habits = settingsResult.data.habits || [];
+                }
                 if (settingsResult.data.habitData) {
                     habitData = settingsResult.data.habitData;
                 }
@@ -1719,6 +1854,12 @@
                 if (progressResult.data.daysInMonth) {
                     daysInMonth = progressResult.data.daysInMonth;
                 }
+            }
+            
+            // Если у нас есть привычки, но нет данных за текущий месяц, создаем пустые данные
+            if (habits.length > 0 && Object.keys(habitData).length === 0) {
+                createNewMonthData();
+                console.log(`🔄 Создаем пустые данные для ${habits.length} привычек в ${currentMonth}`);
             }
             
             return habits.length > 0;
@@ -1877,7 +2018,7 @@
                 
                 const monthName = monthNames[monthKey] ? `${monthNames[monthKey].name} ${monthData.year}` : monthKey;
                 const stats = monthData.statistics || {};
-                const monthDays = monthData.daysInMonth || 30;
+                const monthDays = monthData.daysInMonth || 31;
                 
                 monthDiv.innerHTML = `
                     <div class="history-month-title">${monthName}</div>
@@ -1968,6 +2109,9 @@
             
             // Вызываем ту же функцию что и в настройках
             toggleHabitSelection(-1, fakeElement, habitToRemove);
+            
+            // Сохраняем привычки глобально после удаления
+            await saveHabitsGlobally();
             
             // Обновляем интерфейс
             setTimeout(() => {
@@ -2234,6 +2378,9 @@
                     habitData[newIndex][day] = 0;
                 }
             }
+            
+            // ИСПРАВЛЕНИЕ: Сохраняем привычки глобально при каждом изменении в настройках
+            saveHabitsGlobally();
         }
 
         function addCustomHabit() {
@@ -2334,12 +2481,18 @@
                 for (let day = 1; day <= daysInMonth; day++) {
                     habitData[newIndex][day] = 0;
                 }
+                
+                // ИСПРАВЛЕНИЕ: Сохраняем привычки глобально
+                saveHabitsGlobally();
             }
         }
 
         async function finishSetup() {
-            // Автосохранение выбранных привычек
-            await forceSaveProgress();
+            // ИСПРАВЛЕНИЕ: Сохраняем привычки глобально и локально
+            await Promise.all([
+                forceSaveProgress(),
+                saveHabitsGlobally()
+            ]);
             
             // Возвращаемся к основному экрану
             goBack();
@@ -2396,12 +2549,16 @@
                 `;
 
                 for (let day = 1; day <= daysInMonth; day++) {
-                    const isWeekStart = day % 7 === 1 && day > 1;
-                    const extraClass = isWeekStart ? ' week-separator' : '';
+                    // Определяем день недели для выделения выходных
+                    const monthNumber = monthNames[currentMonth].order;
+                    const weekday = getWeekdayForDate(currentYear, monthNumber, day);
+                    
+                    let extraClass = '';
                     const isTodayColumn = day === todayDate ? ' today-column' : '';
+                    const isWeekendColumn = (weekday === 0 || weekday === 6) ? ' weekend-column' : '';
                     
                     rowHTML += `
-                        <td class="${extraClass}${isTodayColumn}">
+                        <td class="${extraClass}${isTodayColumn}${isWeekendColumn}">
                             <div class="tri-state-checkbox" 
                                  data-habit="${habitIndex}" 
                                  data-day="${day}"
@@ -2465,6 +2622,9 @@
         function updateHabitName(index, name) {
             habits[index].name = name;
             habits[index].icon = name.split(' ')[0] || '📝';
+            
+            // ИСПРАВЛЕНИЕ: Сохраняем привычки глобально при изменении имени
+            saveHabitsGlobally();
         }
 
         function updateProgress() {
